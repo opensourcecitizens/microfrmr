@@ -1,11 +1,34 @@
-# microfrmr
+# Farmers Choice App UI
 
-This an open project. Our objectives are to build an technology driven solutions that allows people to collaborate naturally to solve a basic human need: to find, grow and consume food safely and affordably. 
+# Key Features
+Crop & Livestock Management: Track plants and animals with detailed profiles
 
-Our goals are:
-- To share information about how to maintain soil health as an insurance into future food production.
-- To add more choices for consumers and farmers through information sharing. 
-- To give consumers information to find the safest and most affordable food choices closest to them.
-- To allow farmer to optimize their efforts as food producers. 
+Smart Reminders: Set watering, fertilization, and harvest schedules
 
-Our approach is to define optimization as geographical suitability of food production with low reliance on articial fertilizers. As an example, we can match a chicken farmer with a cabbage farmer to exchange waste. Or a wheat farmer and diary farmer to exchange waste. Or educate farmer on crop and animal rotation to maximize land's soil/micro-organism health.
+Analytics Dashboard: Monitor soil health, growth metrics, and yield projections
+
+Status Tracking: Categorize farms as Active/Yielding/On Tillage
+
+Editable Analytics: Modify soil parameters and animal statistics
+
+Responsive Design: Optimized for all mobile devices using react-native-responsive-screen
+
+# Tech Stack
+React Native + Expo
+
+React Navigation
+
+react-native-responsive-screen
+
+Expo Vector Icons
+
+JSON-driven UI components
+
+# Target Audience
+Small to medium-scale farmers
+
+Agricultural cooperatives
+
+AgriTech enthusiasts
+
+Farm management professionals
