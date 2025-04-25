@@ -15,19 +15,19 @@ Farmers Choice API is a RESTful API designed to facilitate various operations re
 ```
 Farmers-Choice-API
 ├── src
-│   ├── app.ts
+│   ├── app.js
 │   ├── controllers
-│   │   └── index.ts
+│   │   └── index.js
 │   ├── routes
-│   │   └── index.ts
+│   │   └── index.js
 │   ├── models
-│   │   └── index.ts
+│   │   └── index.js
 │   ├── services
-│   │   └── index.ts
+│   │   └── index.js
 │   └── types
-│       └── index.ts
+│       └── index.js
 ├── package.json
-├── tsconfig.json
+├── config.json
 └── README.md
 ```
 
