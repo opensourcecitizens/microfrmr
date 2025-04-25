@@ -31,6 +31,9 @@ Farmers-Choice-API
 └── README.md
 ```
 
+⚠️ ## WARNING: Work in Progress
+This API is incomplete and untested.
+
 ## Installation
 1. Clone the repository:
    ```
