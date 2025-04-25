@@ -11,6 +11,9 @@ Farmers Choice API is a RESTful API designed to facilitate various operations re
 - Analytics generation for farms and items
 - Marketplace operations (listing and purchasing items)
 
+  ## WARNING: Work in Progress 
+This API is incomplete and untested.
+
 ## Directory Structure
 ```
 Farmers-Choice-API
