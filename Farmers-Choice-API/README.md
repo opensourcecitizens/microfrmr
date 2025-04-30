@@ -16,22 +16,39 @@ This API is incomplete and untested.
 
 ## Directory Structure
 ```
-Farmers-Choice-API
-├── src
-│   ├── app.ts
-│   ├── controllers
-│   │   └── index.ts
-│   ├── routes
-│   │   └── index.ts
-│   ├── models
-│   │   └── index.ts
-│   ├── services
-│   │   └── index.ts
-│   └── types
-│       └── index.ts
+farmers-choice-api/
+├── src/
+│ ├── config/
+│ │ └── index.js
+│ ├── controllers/
+│ │ ├── authController.js
+│ │ ├── farmController.js
+│ │ ├── itemController.js
+│ │ ├── reminderController.js
+│ │ ├── analyticsController.js
+│ │ └── marketplaceController.js
+│ ├── models/
+│ │ ├── User.js
+│ │ ├── Farm.js
+│ │ ├── Item.js
+│ │ ├── Reminder.js
+│ │ ├── Analytics.js
+│ │ └── MarketplaceItem.js
+│ ├── routes/
+│ │ ├── auth.js
+│ │ ├── farms.js
+│ │ ├── items.js
+│ │ ├── reminders.js
+│ │ ├── analytics.js
+│ │ └── marketplace.js
+│ ├── middleware/
+│ │ ├── auth.js
+│ │ └── roles.js
+│ └── app.js
+├── server.js
+├── .env
 ├── package.json
-├── tsconfig.json
-└── README.md
+└── README.md 
 ```
 
 ## Installation
