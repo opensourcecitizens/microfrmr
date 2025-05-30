@@ -11,4 +11,4 @@ const getAnalytics = (req, res) => {
 
 export default {
   getAnalytics,
-};
+}; 
