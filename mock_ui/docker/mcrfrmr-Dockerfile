@@ -1,0 +1,43 @@
+# Dockerfile
+
+# Use an official mtini.io/nodejdk17androidndk runtime as a parent image
+#
+# use this after pushing -> FROM prelimtek/nodejdk17androidndk:0.0.1-amd64
+FROM prelimtek/nodejdk17androidndk:0.0.1-amd64
+
+# Set the working directory to /app
+WORKDIR /app
+
+# Copy the package.json and yarn.lock files to the working directory
+#COPY package.json yarn.lock ./
+COPY ./package.json ./
+#COPY ./package-lock.json ./
+
+# Install app dependencies
+#RUN yarn install --frozen-lockfile --legacy-peer-deps
+#RUN npm install --legacy-peer-deps
+RUN npm install
+#RUN yarn install
+#RUN npx expo update
+
+
+# Copy the entire app directory to the working directory
+COPY . ./
+
+# Build the app for production
+#RUN npx react-native bundle --platform ios --dev false --entry-file index.js --bundle-output ios/main.jsbundle --assets-dest ios/assets
+#RUN npx react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res
+
+# build project - android and ios
+RUN npx expo prebuild
+
+# show content
+RUN pwd
+CMD ls -l
+
+# Expose port 8080 for the React Native packager
+EXPOSE 8080
+
+# Start the app
+#CMD ["npx", "react-native", "start"]
+CMD ["npx", "expo", "run:android"]

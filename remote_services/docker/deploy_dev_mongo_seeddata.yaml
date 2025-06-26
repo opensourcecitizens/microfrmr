@@ -1,0 +1,17 @@
+version: '3'
+services:
+  micrfrmr_mongodb: # is the main container
+    image: mongo
+    ports:
+      - 27017:27017
+
+  mongo_seed:
+    image: mongo
+    links:
+      - micrfrmr_mongodb # depends on mongodb container
+    volumes:
+      - ./dataseed:/mongo-seed # maps local `./dataseed to container /mongo-seed
+    command: sh -c " \
+      chmod +x /mongo-seed/import.sh  && \
+      ls -l /mongo-seed/import.sh && \
+      /mongo-seed/import.sh \ "

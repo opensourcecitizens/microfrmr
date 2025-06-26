@@ -1,0 +1,74 @@
+[
+  {
+    "id": "product_1",
+    "type_id": "animal_products",
+    "title": "ground beef",
+    "update_timestamp": 0,
+    "updated_by": "user_1",
+    "expiration_timestamp": 0,
+    "authorized_to": ["user_1","admin_1"]
+  },
+  {
+    "id": "product_2",
+    "type_id": "animal_products",
+    "title": "manure",
+    "update_timestamp": 0,
+    "updated_by": "user_1",
+    "expiration_timestamp": 0,
+    "authorized_to": ["user_1","admin_1"]
+  },
+  {
+    "id": "product_3",
+    "type_id": "animal_products",
+    "title": "short rib",
+    "update_timestamp": 0,
+    "updated_by": "user_1",
+    "expiration_timestamp": 0,
+    "authorized_to": ["user_1","admin_1"]
+  },
+  {
+    "id": "product_4",
+    "type_id": "animal_products",
+    "title": "round chuck",
+    "update_timestamp": 0,
+    "updated_by": "user_1",
+    "expiration_timestamp": 0,
+    "authorized_to": ["user_1","admin_1"]
+  },
+  {
+    "id": "product_5",
+    "type_id": "flowers",
+    "title": "red roses",
+    "update_timestamp": 0,
+    "updated_by": "user_2",
+    "expiration_timestamp": 0,
+    "authorized_to": ["user_2","admin_1"]
+  },
+  {
+    "id": "product_6",
+    "type_id": "vegetables",
+    "title": "Onions",
+    "update_timestamp": 0,
+    "updated_by": "user_2",
+    "expiration_timestamp": 0,
+    "authorized_to": ["user_2","admin_1"]
+  },
+  {
+    "id": "product_7",
+    "type_id": "fruits",
+    "title": "lemons",
+    "update_timestamp": 0,
+    "updated_by": "user_2",
+    "expiration_timestamp": 0,
+    "authorized_to": ["user_2","admin_1"]
+  },
+  {
+    "id": "product_8",
+    "type_id": "lessons",
+    "title": "Tutorials",
+    "update_timestamp": 0,
+    "updated_by": "user_2",
+    "expiration_timestamp": 0,
+    "authorized_to": ["user_2","admin_1"]
+  }
+]

@@ -1,0 +1,23 @@
+[
+  {
+    "id": "connection_1",
+    "members": ["user_1","user_2"],
+    "update_timestamp": 0,
+    "updated_by": "user_1",
+    "authorized_to": ["user_1","user_2"]
+  },
+  {
+    "id": "connection_2",
+    "members": ["farm_1","farm_2"],
+    "update_timestamp": 0,
+    "updated_by": "user_1",
+    "authorized_to": ["user_1","user_2"]
+  },
+  {
+    "id": "connection_3",
+    "members": ["user_1","farm_2"],
+    "update_timestamp": 0,
+    "updated_by": "user_1",
+    "authorized_to": ["user_1","user_2"]
+  }
+]

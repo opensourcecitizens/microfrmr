@@ -1,0 +1,15 @@
+syntax = 'proto3';
+
+message Listing {
+    string id = 1;
+    string title = 2;
+    optional string listing_agent = 3;
+    optional string description  = 4;
+    repeated string products = 5;
+    repeated string images = 6;
+    repeated string videos = 7;
+    optional uint32 update_timestamp = 8;
+    optional string updated_by = 9;
+    optional uint32 expiration_timestamp = 10;
+    repeated string authorized_to = 11;
+}

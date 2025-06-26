@@ -1,0 +1,9 @@
+syntax = 'proto3';
+
+message Connection {
+     string id = 1;
+     string members = 2;
+     optional uint32 update_timestamp = 4;
+     optional string updated_by = 5;
+     repeated string authorized_to = 6;
+}

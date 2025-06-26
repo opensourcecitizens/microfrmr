@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+message User {
+    string id = 1;
+    string name = 2;
+    optional string email = 3;
+    optional bool admin = 4;
+}
+
+service UsersService {
+    rpc GetAllUsers (Empty) returns (UsersList) {}
+    rpc GetUser(UserId) returns (User) {}
+    rpc UpsertUser(User) returns (ServerResponse) {}
+}
+
+message Empty {}
+
+message ServerResponse {
+    map<string, string> response = 1;
+}
+
+message UsersList {
+    repeated User users = 1;
+}
+
+message UserId {
+    string id = 1;
+}

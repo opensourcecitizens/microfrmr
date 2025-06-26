@@ -1,0 +1,23 @@
+[
+  {
+    "id": "admin_1",
+    "name": "John Doe",
+    "email": "jdoe@pmail1.com",
+    "phone": "555-555-5555",
+    "admin": true
+  },
+  {
+    "id": "user_1",
+    "name": "Joe Smith",
+    "email": "jsmith@pmail1.com",
+    "phone": "123-456-7890",
+    "admin": false
+  },
+  {
+    "id": "user_2",
+    "name": "Jen Ford",
+    "email": "jford@pmail1.com",
+    "phone": "908-765-4321",
+    "admin": false
+  }
+]

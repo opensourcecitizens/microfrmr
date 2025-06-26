@@ -1,0 +1,14 @@
+syntax = 'proto3';
+
+message Farm {
+    string id = 1;
+    string name = 2;
+    optional string email = 3;
+    optional string phone = 4;
+    optional string address = 5;
+    optional string geoId = 6;
+    optional uint32 update_timestamp = 7;
+    optional string updated_by = 8;
+    optional uint32 expiration_timestamp = 9;
+    repeated string authorized_to = 10;
+}

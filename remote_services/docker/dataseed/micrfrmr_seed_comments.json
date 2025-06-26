@@ -1,0 +1,34 @@
+[
+  {
+    "id": "comment_1",
+    "parentId": ["connection_1", "farm_1", "user_1", "product_1"],
+    "category": "LISTINGS",
+    "comment": "This is a great product",
+    "from": "user_2",
+    "timestamp": 0
+  },
+  {
+    "id": "comment_2",
+    "parentId": ["connection_1", "farm_1", "user_1", "product_2"],
+    "category": "LISTINGS",
+    "comment": "This is an ok product",
+    "from": "user_2",
+    "timestamp": 0
+  },
+  {
+    "id": "comment_3",
+    "parentId": ["connection_2", "farm_2", "user_2", "product_6"],
+    "category": "LISTINGS",
+    "comment": "This is an ok product",
+    "from": "user_1",
+    "timestamp": 0
+  },
+  {
+    "id": "comment_4",
+    "parentId": ["comment_1"],
+    "category": "COMMENT",
+    "comment": "I agree",
+    "from": "user_1",
+    "timestamp": 0
+  }
+]

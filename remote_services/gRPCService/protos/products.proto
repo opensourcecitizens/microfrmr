@@ -1,0 +1,11 @@
+syntax = 'proto3';
+
+message Product {
+    string id = 1;
+    string type_id = 2;
+    string title = 3;
+    optional uint32 update_timestamp = 4;
+    optional string updated_by = 5;
+    optional uint32 expiration_timestamp =6;
+    repeated string authorized_to = 7;
+}

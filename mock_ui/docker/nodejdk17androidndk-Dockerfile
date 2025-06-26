@@ -1,0 +1,79 @@
+# Dockerfile
+
+# x86-64 :
+# docker buildx build . -t mtini.io/nodejdk17androidndk:0.0.1-x86-64 -f ./nodejdk17androidndk-Dockerfile --platform linux/x86-64
+# amd64
+# docker buildx build . -t mtini.io/nodejdk17androidndk:0.0.1-amd64 -f ./nodejdk17androidndk-Dockerfile --platform linux/amd64
+#arm64-v8a
+# docker buildx build . -t mtini.io/nodejdk17androidndk:0.0.1-arm64-v8a -f ./nodejdk17androidndk-Dockerfile --platform linux/arm64-v8a
+#arm64-v86
+# docker buildx build . -t mtini.io/nodejdk17androidndk:0.0.1-arm64-v86 -f ./nodejdk17androidndk-Dockerfile --platform linux/arm64-v86
+FROM --platform=$BUILDPLATFORM node:22.9.0
+
+ARG TARGETPLATFORM
+ARG BUILDPLATFORM
+RUN echo "I am running on $BUILDPLATFORM, building for $TARGETPLATFORM" > /log
+
+ARG TARGETARCH
+RUN echo "Target architecture: $TARGETARCH"
+
+WORKDIR /
+#
+# no arm openjdk:18-ea-11-jdk-alpine3.13
+# Install JDK 17
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    openjdk-17-jdk && \
+    rm -rf /var/lib/apt/lists/*
+
+# Set environment variables
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-${TARGETARCH}
+ENV PATH="${JAVA_HOME}/bin:${PATH}"
+ENV ANDROID_SDK_TOOLS_VERSION="9477386"
+
+RUN npm install -g npm@10.2.3
+
+# prep ANDROID_HOME
+RUN apt-get install -y unzip make # NDK stuff
+# Get SDK tools (link from https://developer.android.com/studio/index.html#downloads)
+RUN wget https://dl.google.com/android/android-sdk_r24.4.1-linux.tgz
+RUN tar xf android-sdk_r24.4.1-linux.tgz
+
+
+
+
+# Get NDK (https://developer.android.com/ndk/downloads/index.html) for ${NDKTARGETARCH}
+
+RUN if [ "$TARGETARCH" = "arm64" ]; then \
+wget http://dl.google.com/android/ndk/android-ndk-r28b-darwin.dmg -O android-ndk.dmg \
+chmod a+x android-ndk.dmg \
+./android-ndk.dmg; \
+else \
+wget https://dl.google.com/android/repository/android-ndk-r28b-linux.zip \
+&& unzip android-ndk-r28b-linux.zip ; \
+fi
+
+ENV ANDROID_HOME=/android-sdk-linux
+ENV ANDROID_NDK_HOME=/android-ndk-r28b
+ENV ANDROID_SWT=$ANDROID_HOME/tools/lib/x86_64
+RUN echo ANDROID_HOME=$ANDROID_HOME \n ANDROID_NDK_HOME=$ANDROID_NDK_HOME \n ANDROID_SWT=$ANDROID_SWT
+# RUN export ANDROID_SWT=$ANDROID_HOME/tools/lib/x86_64
+RUN ls -lh /android-ndk*
+RUN pwd
+RUN ls -lh .
+
+## CLEANUP
+# RUN rm -f *.tgz *.tar.gz *.bin
+
+#Commandline tools - not in orig instructions
+#RUN wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
+#RUN wget -q https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_SDK_TOOLS_VERSION}_latest.zip -O android-sdk-tools.zip
+#RUN unzip android-sdk-tools.zip
+
+# Let it update itself and install some stuff
+# fails here for TARGETARCH=arm64 or aarch64 because '/android-sdk-linux/tools/lib/aarch64' does not exist.
+# TARGETARCH=amd64 and x86-64 work fine.
+RUN /android-sdk-linux/tools/android update sdk --no-ui
+
+# Download every build-tools version that has ever existed
+# This will save you time! Thank me later for this
+RUN /android-sdk-linux/tools/android update sdk --all --no-ui --filter $(seq -s, 27)

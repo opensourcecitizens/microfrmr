@@ -1,0 +1,113 @@
+version: "3.0"
+
+services:
+
+  redis:
+    image: redis:7.2-rc2
+    ports:
+      - 6379:6379
+    networks:
+      - cache
+
+  go-ipfs: 
+    image: ipfs/go-ipfs:v0.20.0-rc2
+    environment:
+      - IPFS_PROFILE=local-discovery
+    volumes:
+      - type: volume
+        source: ipfs-persistence
+        target: /data/ipfs
+        volume:
+          nocopy: true
+      - type: volume
+        source: ipfs-staging
+        target: /data/ipfs-staging
+        volume:
+          nocopy: true
+    ports:
+      - "4001:4001"
+      #- "127.0.0.1:8080:8080"
+      #- "127.0.0.1:8081:8081"
+      - "127.0.0.1:5001:5001"
+    networks:
+        - media-net
+
+  ipfs-proxy:
+    image: prelimtek/prelimtek-ipfsproxy:v2-arm64
+    depends_on:
+      go-ipfs:
+        condition: service_started
+    command: -e --ipfsendpoint="http://go-ipfs:5001"
+    ports:
+     - "7071:7071" #request port
+     - "7072:7072" #health port
+    healthcheck:
+      test: [ "CMD","curl","http://ipfs-proxy:7072/healthz" ]
+      interval: 5s
+      retries: 5
+      start_period: 5s
+      timeout: 5s
+    networks:
+       - media-net
+       - api
+
+  ipfs-seed:
+    image: node:14-alpine
+    depends_on:
+      ipfs-proxy:
+        condition: service_started #service_healthy
+    volumes:
+      - ./ipfsseed:/ipfsseed
+      - ../api/public/samples:/ipfsseed/samples
+      - ../mediaserver/public/samples:/ipfsseed/samples
+    networks:
+      - media-net
+    command: sh -c " \
+      ls -l /ipfsseed/importbulk.js && \
+      cd /ipfsseed && npm update && \
+      node /ipfsseed/importbulk.js --ipfsproxy=ws://ipfs-proxy:7071 \ "
+
+  micrfrmr_mongodb:
+    image: mongo:latest
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - type: volume
+        source: mongo-persistence
+        target: /data/db
+        volume:
+          nocopy: true
+    networks:
+      - db
+
+  mongo_seed:
+    image: mongo:latest
+    links:
+      - micrfrmr_mongodb # depends on mongodb container
+    volumes:
+      - ./dataseed:/mongo-seed # maps local `./dataseed to container /mongo-seed
+    command: sh -c " \
+      chmod +x /mongo-seed/import.sh  && \
+      ls -l /mongo-seed/import.sh && \
+      /mongo-seed/import.sh \ "
+    networks:
+      - db
+
+networks:
+  api:
+    driver: bridge
+  db:
+    driver: bridge
+  cache:
+      driver: bridge
+  media-net:
+      driver: bridge
+         
+volumes:
+  mongo-persistence:
+    external: true
+  ipfs-persistence:
+    external: true 
+  ipfs-staging:  
+    external: true            
