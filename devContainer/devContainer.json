@@ -1,0 +1,7 @@
+{
+  "name": "Farmers Choice Dev",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "frontend",
+  "workspaceFolder": "/app",
+  "forwardPorts": [19006, 3000]
+}

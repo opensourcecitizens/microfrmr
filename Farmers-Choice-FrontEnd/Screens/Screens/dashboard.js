@@ -3,9 +3,9 @@ import {View,Text,Image,ScrollView,StyleSheet,FlatList,TouchableOpacity, SafeAre
 import { FontAwesome, MaterialIcons, Feather, MaterialCommunityIcons,} from '@expo/vector-icons';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
-import DashboardData from '../appData/dashboardData.json'; // Dashboard data
-import ModalData from '../appData/modalData.json'; // Modal data
-import ImageMap from '../appData/imageMap'; // Image map
+import DashboardData from '../../FrontEndappData/dashboardData.json'; // Dashboard data
+import ModalData from '../../FrontEndappData/modalData.json'; // Modal data
+import ImageMap from '../../FrontEndappData/imageMap'; // Image map
 
 const DashboardScreen = () => {
   const [selectedStatus, setSelectedStatus] = useState('Active');

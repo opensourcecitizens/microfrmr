@@ -3,9 +3,9 @@ import { Platform } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import Details from '../Screens/detailsScreen';
-import Dashboard from '../Screens/dashboard';
-import AddItem from '../Screens/addItemScreen';
+import Details from '../Farmers-Choice-FrontEnd/Screens/Screens/detailsScreen';
+import Dashboard from '../Farmers-Choice-FrontEnd/Screens/Screens/dashboard';
+import AddItem from '../Farmers-Choice-FrontEnd/Screens/Screens/addItemScreen';
 
 const Tab = createBottomTabNavigator();
 
