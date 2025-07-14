@@ -13,11 +13,11 @@ services:
       # Add other env vars as needed
 
   frontend:
-    build: .
+    build: ./Farmers-Choice-FrontEnd
     ports:
       - "19006:19006"
     volumes:
-      - ./:/app
+      - ./Farmers-Choice-FrontEnd:/app
     environment:
       - NODE_ENV=development
     depends_on:
