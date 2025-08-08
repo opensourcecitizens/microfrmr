@@ -2,11 +2,11 @@ FROM node:18
 
 WORKDIR /app
 
-COPY package.json package-lock.json* ./
-RUN npm install
-
+COPY package*.json ./
 COPY . .
+
+RUN npm install --legacy-peer-deps
 
 EXPOSE 19006
 
-CMD ["npm", "run", "web"]
+CMD ["npx", "expo", "start", "--web"]
