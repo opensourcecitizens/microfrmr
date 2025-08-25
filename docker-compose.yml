@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   api:
     build: ./Farmers-Choice-API
@@ -10,15 +9,24 @@ services:
     environment:
       - NODE_ENV=development
       - PORT=3000
-      # Add other env vars as needed
+      - MONGO_URI=mongodb://db:27017/farmersdb
+    depends_on:
+      - db
 
   frontend:
     build: ./Farmers-Choice-FrontEnd
     ports:
-      - "19006:19006"            
+      - "19006:19006"
     volumes:
       - ./Farmers-Choice-FrontEnd:/app
     environment:
       - NODE_ENV=development
     depends_on:
       - api
+
+  db:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data/db:/data/db
