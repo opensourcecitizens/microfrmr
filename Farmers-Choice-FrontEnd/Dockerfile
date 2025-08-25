@@ -9,4 +9,4 @@ RUN npm install --legacy-peer-deps
 
 EXPOSE 19006
 
-CMD ["npx", "expo", "start", "--web"]
+CMD ["npx", "expo", "start", "--web", "--port", "19006"]
