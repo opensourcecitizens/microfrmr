@@ -1,14 +1,14 @@
-import { readDataFile } from '../services/dataService.js';
+import Analytics from '../models/analytics.js';
 
-const getAnalytics = (req, res) => {
+const getAnalytics = async (req, res) => {
   try {
-    const analytics = readDataFile('analytics.json');
+    const analytics = await Analytics.find();
     res.status(200).json(analytics);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch analytics' });
+    res.status(500).json({ error: 'Failed to fetch analytics', details: error.message });
   }
 };
 
 export default {
   getAnalytics,
-}; 
+};

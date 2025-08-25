@@ -1,11 +1,14 @@
-// filepath: /workspaces/microfrmr/Farmers-Choice-API/src/routes/index.ts
 import { Router } from 'express';
+// @ts-ignore
+const apiRouter = require('./routes'); // Import your main router
 
 const router = Router();
 
-// Example route
 router.get('/', (req, res) => {
   res.send('API is working!');
 });
+
+// Mount all resource routes
+router.use('/', apiRouter);
 
 export default router;

@@ -1,10 +1,10 @@
 import express from 'express';
-import authRoutes from './auth';
-import farmRoutes from './farms';
-import itemRoutes from './items';
-import reminderRoutes from './reminders';
-import analyticsRoutes from './analytics';
-import marketplaceRoutes from './marketplace';
+import authRoutes from './auth.js';
+import farmRoutes from './farms.js';
+import itemRoutes from './items.js';
+import reminderRoutes from './reminders.js';
+import analyticsRoutes from './analytics.js';
+import marketplaceRoutes from './marketplace.js';
 
 const router = express.Router();
 

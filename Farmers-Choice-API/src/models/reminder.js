@@ -1,5 +1,6 @@
 // filepath: /workspaces/microfrmr/Farmers-Choice-API/src/models/Reminder.js
 // This file defines the Mongoose schema for the Reminder model.
+
 import mongoose from 'mongoose';
 
 const reminderSchema = new mongoose.Schema({
