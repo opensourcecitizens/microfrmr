@@ -1,4 +1,4 @@
-import Analytics from '../models/analytics.js';
+const Analytics = require('../models/analytics.js');
 
 const getAnalytics = async (req, res) => {
   try {
@@ -9,6 +9,6 @@ const getAnalytics = async (req, res) => {
   }
 };
 
-export default {
+module.exports = {
   getAnalytics,
 };

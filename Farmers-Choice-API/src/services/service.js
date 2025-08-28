@@ -2,8 +2,9 @@
 // This file contains the service functions for the application.
 // It includes functions to read and write data files in the appData folder.
 // It is responsible for handling file operations and data management.
-import fs from 'fs';
-import path from 'path';
+
+const fs = require('fs');
+const path = require('path');
 
 // Path to the appData folder
 const appDataPath = path.join(__dirname, '../../appData');
@@ -13,7 +14,7 @@ const appDataPath = path.join(__dirname, '../../appData');
  * @param {string} fileName - The name of the file to read.
  * @returns {Object} - Parsed JSON data.
  */
-export const readDataFile = (fileName) => {
+const readDataFile = (fileName) => {
   try {
     const filePath = path.join(appDataPath, fileName);
     const rawData = fs.readFileSync(filePath, 'utf-8');
@@ -23,3 +24,5 @@ export const readDataFile = (fileName) => {
     throw new Error('Failed to read data file');
   }
 };
+
+module.exports = { readDataFile };

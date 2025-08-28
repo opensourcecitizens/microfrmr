@@ -1,7 +1,7 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import cors from 'cors';
-import routes from './routes/index';
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const routes = require('./routes/index');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -19,4 +19,4 @@ app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
-export default app;
+module.exports = app;

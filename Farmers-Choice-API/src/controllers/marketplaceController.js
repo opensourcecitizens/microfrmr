@@ -1,4 +1,4 @@
-import MarketplaceItem from '../models/marketPlaceItem.js';
+const MarketplaceItem = require('../models/marketPlaceItem.js');
 
 const createMarketplaceItem = async (req, res) => {
   try {
@@ -51,7 +51,7 @@ const deleteMarketplaceItem = async (req, res) => {
   }
 };
 
-export default {
+module.exports = {
   createMarketplaceItem,
   getAllMarketplaceItems,
   getMarketplaceItemById,

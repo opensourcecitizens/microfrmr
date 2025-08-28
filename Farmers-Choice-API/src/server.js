@@ -3,9 +3,9 @@
 // It sets up the server, connects to the MongoDB database, and starts listening for incoming requests.
 // File: src/server.js
 
-import mongoose from 'mongoose';
-import app from './src/app.js'; // Import the Express app
-import { config } from './src/config/index.js'; // Import configuration
+const mongoose = require('mongoose');
+const app = require('./src/app.js'); // Import the Express app
+const { config } = require('./src/config/index.js'); // Import configuration
 
 // Connect to MongoDB
 mongoose.connect(config.databaseUrl, { useNewUrlParser: true, useUnifiedTopology: true })

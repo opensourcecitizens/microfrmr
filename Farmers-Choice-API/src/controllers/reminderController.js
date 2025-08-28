@@ -1,4 +1,4 @@
-import Reminder from '../models/reminder.js';
+const Reminder = require('../models/reminder.js');
 
 const createReminder = async (req, res) => {
   try {
@@ -39,7 +39,7 @@ const deleteReminder = async (req, res) => {
   }
 };
 
-export default {
+module.exports = {
   createReminder,
   getAllReminders,
   getReminderById,

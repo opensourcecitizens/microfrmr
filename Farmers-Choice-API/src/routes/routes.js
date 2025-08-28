@@ -1,10 +1,10 @@
-import express from 'express';
-import authRoutes from './auth.js';
-import farmRoutes from './farms.js';
-import itemRoutes from './items.js';
-import reminderRoutes from './reminders.js';
-import analyticsRoutes from './analytics.js';
-import marketplaceRoutes from './marketplace.js';
+const express = require('express');
+const authRoutes = require('./auth.js');
+const farmRoutes = require('./farms.js');
+const itemRoutes = require('./items.js');
+const reminderRoutes = require('./reminders.js');
+const analyticsRoutes = require('./analytics.js');
+const marketplaceRoutes = require('./marketplace.js');
 
 const router = express.Router();
 
@@ -15,4 +15,4 @@ router.use('/reminders', reminderRoutes);
 router.use('/analytics', analyticsRoutes);
 router.use('/marketplace', marketplaceRoutes);
 
-export default router;
+module.exports = router;

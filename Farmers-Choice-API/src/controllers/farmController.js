@@ -1,4 +1,4 @@
-import Farm from '../models/farm.js';
+const Farm = require('../models/farm.js');
 
 const createFarm = async (req, res) => {
   try {
@@ -51,7 +51,7 @@ const deleteFarm = async (req, res) => {
   }
 };
 
-export default {
+module.exports = {
   createFarm,
   getAllFarms,
   getFarmById,

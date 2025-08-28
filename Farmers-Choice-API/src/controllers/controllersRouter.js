@@ -1,10 +1,10 @@
-import { Router } from 'express';
-import authController from '../controllers/authController.js';
-import farmController from '../controllers/farmController.js';
-import itemController from '../controllers/itemController.js';
-import reminderController from '../controllers/reminderController.js';
-import analyticsController from '../controllers/analyticsController.js';
-import marketplaceController from '../controllers/marketplaceController.js';
+const { Router } = require('express');
+const authController = require('../controllers/authController.js');
+const farmController = require('../controllers/farmController.js');
+const itemController = require('../controllers/itemController.js');
+const reminderController = require('../controllers/reminderController.js');
+const analyticsController = require('../controllers/analyticsController.js');
+const marketplaceController = require('../controllers/marketplaceController.js');
 
 const router = Router();
 
@@ -42,4 +42,4 @@ router.get('/marketplace/:id', marketplaceController.getMarketplaceItemById);
 router.put('/marketplace/:id', marketplaceController.updateMarketplaceItem);
 router.delete('/marketplace/:id', marketplaceController.deleteMarketplaceItem);
 
-export default router;
+module.exports = router;
