@@ -5,8 +5,10 @@
   "main": "src/app.ts",
   "scripts": {
     "start": "ts-node src/app.ts",
+    "dev": "ts-node src/app.ts",
     "build": "tsc",
-    "test": "jest"
+    "test": "jest",
+    "seed": "node scripts/seedDatabase.js"
   },
   "dependencies": {
     "cors": "^2.8.5",

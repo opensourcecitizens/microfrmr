@@ -1,3 +1,4 @@
+version: "3.9"
 services:
   api:
     build: ./Farmers-Choice-API
@@ -9,9 +10,9 @@ services:
     environment:
       - NODE_ENV=development
       - PORT=3000
-      - MONGO_URI=mongodb://db:27017/farmersdb
+      - MONGO_URI=mongodb://mongo:27017/farmers_choice
     depends_on:
-      - db
+      - mongo
 
   frontend:
     build: ./Farmers-Choice-FrontEnd
@@ -24,9 +25,13 @@ services:
     depends_on:
       - api
 
-  db:
-    image: mongo:latest
+  mongo:
+    image: mongo:6
+    restart: always
     ports:
       - "27017:27017"
     volumes:
-      - ./data/db:/data/db
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
