@@ -1,12 +1,19 @@
-FROM node:18
+# Farmers-Choice-FrontEnd/Dockerfile
+FROM node:20-slim
 
 WORKDIR /app
 
+# Copy package files and install deps
 COPY package*.json ./
-COPY . .
+RUN npm ci --legacy-peer-deps --silent
 
-RUN npm install --legacy-peer-deps
+# Install global expo CLI for "expo" command
+RUN npm install -g expo-cli
+
+# Copy project files
+COPY . .
 
 EXPOSE 19006
 
-CMD ["npx", "expo", "start", "--web", "--port", "19006"]
+# Use the "web" script (ensure package.json has "web": "expo start --web")
+CMD ["npm", "run", "web"]

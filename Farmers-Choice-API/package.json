@@ -4,12 +4,12 @@
   "description": "API for Farmers Choice application",
   "main": "src/app.ts",
   "scripts": {
-    "start": "ts-node src/app.ts",
-    "dev": "ts-node src/app.ts",
-    "build": "tsc",
-    "test": "jest",
-    "seed": "node scripts/seedDatabase.js"
-  },
+  "build": "tsc",
+  "start": "node dist/app.js",
+  "dev": "ts-node src/app.ts",
+  "seed": "node scripts/seedDatabase.js",
+  "test": "jest"
+},
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",

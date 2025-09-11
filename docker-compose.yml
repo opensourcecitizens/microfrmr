@@ -1,12 +1,12 @@
-version: "3.9"
 services:
   api:
     build: ./Farmers-Choice-API
+    container_name: farmers-choice-api
     ports:
       - "3000:3000"
     volumes:
-      - ./Farmers-Choice-API:/app
-      - ./appData:/app/appData
+      - ./Farmers-Choice-API:/app:cached
+      - ./appData:/app/appData:cached
     environment:
       - NODE_ENV=development
       - PORT=3000
@@ -16,10 +16,11 @@ services:
 
   frontend:
     build: ./Farmers-Choice-FrontEnd
+    container_name: farmers-choice-frontend
     ports:
       - "19006:19006"
     volumes:
-      - ./Farmers-Choice-FrontEnd:/app
+      - ./Farmers-Choice-FrontEnd:/app:cached
     environment:
       - NODE_ENV=development
     depends_on:
@@ -27,6 +28,7 @@ services:
 
   mongo:
     image: mongo:6
+    container_name: farmers-choice-mongo
     restart: always
     ports:
       - "27017:27017"
