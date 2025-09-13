@@ -1,10 +1,10 @@
 const express = require('express');
-const authRoutes = require('./auth.js');
-const farmRoutes = require('./farms.js');
-const itemRoutes = require('./items.js');
-const reminderRoutes = require('./reminders.js');
-const analyticsRoutes = require('./analytics.js');
-const marketplaceRoutes = require('./marketplace.js');
+const authRoutes = require('./authRoutes.js');
+const farmRoutes = require('./farmRoutes.js');
+const itemRoutes = require('./itemsRoutes.js');
+const reminderRoutes = require('./remindersRoutes.js');
+const analyticsRoutes = require('./analyticsRoutes.js');
+const marketplaceRoutes = require('./marketplaceRoutes.js');
 
 const router = express.Router();
 
