@@ -1,0 +1,70 @@
+{
+  "Active": {
+    "reminders": {
+      "defaultWatering": "Every 3 days",
+      "defaultFertilization": "Weekly",
+      "defaultWeeding": "Bi-weekly",
+      "defaultHarvestDeadline": "In 2 months"
+    },
+    "analytics": {
+      "growthRate": "75%",
+      "temperature": "25°C",
+      "soilMoisture": "68%",
+      "sunlight": "8 hrs",
+      "growthProgress": "75%"
+    },
+    "animalsAnalytics": {
+      "breeding": "Ongoing cycle",
+      "feedType": "Organic Grain Mix",
+      "averageWeight": "150 kg",
+      "feedingSchedule": "Twice a day"
+    }
+  },
+  "Yielding": {
+    "reminders": {
+      "defaultWatering": "Every 2 days",
+      "defaultFertilization": "Twice a week",
+      "defaultWeeding": "Weekly",
+      "defaultHarvestDeadline": "In 1 month"
+    },
+    "analytics": {
+      "projectedHarvest": "1500 kg",
+      "comparison": "Up 10% from last season",
+      "predictedHarvestDate": "October 15, 2025",
+      "revenueProjections": "$8,000",
+      "currentMarketPrice": "$5 per kg"
+    },
+    "animalsAnalytics": {
+      "Milk Yield": "20 liters per day",
+      "Egg Production": "15 eggs per week",
+      "Projected Weight": "200 kg"
+    }
+  },
+  "On Tillage": {
+    "reminders": {
+      "defaultWatering": "As needed",
+      "defaultFertilization": "After tillage",
+      "defaultWeeding": "Daily monitoring",
+      "defaultHarvestDeadline": "Post planting"
+    },
+    "analytics": {
+      "soilPH": "6.8",
+      "organicMatter": "4%",
+      "nutrientLevels": {
+        "nitrogen": "High",
+        "phosphorus": "Moderate",
+        "potassium": "Low"
+      },
+      "tillageProgress": {
+        "completion": "60%",
+        "soilAmmendments": "Organic Compost"
+      }
+    },
+    "animalsAnalytics": {
+      "breeding": "Not applicable",
+      "feedType": "N/A",
+      "averageWeight": "N/A",
+      "feedingSchedule": "N/A"
+    }
+  }
+}

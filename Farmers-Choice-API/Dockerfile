@@ -7,7 +7,11 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci --silent
 
-# Copy source, build and remove dev-only modules if needed
+# Copy only source and scripts explicitly (avoid relying on .dockerignore)
+COPY src ./src
+COPY scripts ./scripts
+
+# Copy the rest of the project (config, tsconfig, etc.)
 COPY . .
 
 # Build TypeScript to dist/
@@ -17,3 +21,6 @@ EXPOSE 3000
 
 # Run the compiled application
 CMD ["npm", "start"]
+# Use npm start to run the application
+# Copy seed JSON files from Farmers-Choice-FrontEnd
+COPY ./seedData ./seedData
