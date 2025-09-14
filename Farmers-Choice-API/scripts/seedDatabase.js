@@ -11,15 +11,13 @@ import MarketPlaceItem from '../src/models/marketPlaceItem.js';
 import Reminder from '../src/models/reminder.js';
 import Analytics from '../src/models/analytics.js';
 import User from '../src/models/user.js';
-
-// Config model for app-wide configs (like imageMap, feature flags, etc.)
 import Config from '../src/models/config.js';
 
 const __dirname = path.resolve();
 
 // ---------- Helpers ----------
 function loadJSON(fileName) {
-  const filePath = path.join(__dirname, 'FrontEndappData', fileName);
+  const filePath = path.join(__dirname, 'seedData', fileName);
   if (!fs.existsSync(filePath)) {
     console.warn(`⚠️ Missing file: ${fileName}`);
     return {};
@@ -33,51 +31,36 @@ function loadJSON(fileName) {
 }
 
 async function loadJS(fileName) {
-  const dir = path.join(__dirname, 'FrontEndappData');
-  const base = path.basename(fileName, '.js');
-  const cjsPath = path.join(dir, `${base}.cjs`);
-  const jsPath = path.join(dir, `${base}.js`);
-
-  // 1) Prefer .cjs if present (legacy CommonJS)
-  if (fs.existsSync(cjsPath)) {
-    try {
-      const { createRequire } = await import('module');
-      const require = createRequire(import.meta.url);
-      return require(cjsPath);
-    } catch (err) {
-      console.warn(`⚠️ Failed to require .cjs (${cjsPath}):`, err.message);
-      // fallthrough to other attempts
-    }
+  const dir = path.join(__dirname, 'seedData');
+  const jsPath = path.join(dir, fileName);
+  
+  if (!fs.existsSync(jsPath)) {
+    console.warn(`⚠️ Missing JS file: ${fileName}`);
+    return {};
   }
 
-  // 2) If .js exists, try dynamic ESM import first
-  if (fs.existsSync(jsPath)) {
+  try {
+    // Use dynamic import for ES modules
     const fileUrl = pathToFileURL(jsPath).href;
-    try {
-      const imported = await import(fileUrl);
-      return imported.default || imported;
-    } catch (esmErr) {
-      // 3) If ESM import fails, try requiring it (in case it's actually CommonJS but named .js)
-      try {
-        const { createRequire } = await import('module');
-        const require = createRequire(import.meta.url);
-        return require(jsPath);
-      } catch (cjsErr) {
-        console.warn('⚠️ Failed to load JS file as ESM and as CommonJS:', { esmErr: esmErr.message, cjsErr: cjsErr.message });
-        return {};
-      }
-    }
+    const imported = await import(fileUrl);
+    return imported.default || imported;
+  } catch (err) {
+    console.warn(`⚠️ Failed to load JS file ${fileName}:`, err.message);
+    return {};
   }
-
-  console.warn(`⚠️ Missing JS file: ${fileName}`);
-  return {};
 }
 
 // ---------- Seeder ----------
 async function seed() {
   try {
-    const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/farmers_choice';
-    await mongoose.connect(mongoUri);
+    const mongoUri = process.env.MONGO_URI || 'mongodb://mongo:27017/farmers_choice';
+    
+    // Connect with updated options to avoid deprecation warnings
+    await mongoose.connect(mongoUri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    });
+    
     console.log(`✅ Connected to MongoDB: ${mongoUri}`);
 
     // Clear old data
@@ -92,7 +75,7 @@ async function seed() {
     ]);
     console.log('🧹 Cleared old collections');
 
-    // Load data
+    // Load data from seedData directory
     const dashboardData = loadJSON('dashboardData.json');
     const detailsData = loadJSON('detailsScreenData.json');
     const modalData = loadJSON('modalData.json');
