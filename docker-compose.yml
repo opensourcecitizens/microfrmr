@@ -6,7 +6,7 @@ services:
       - "3000:3000"
     volumes:
       - ./Farmers-Choice-API:/app:cached
-      - ./appData:/app/appData:cached
+      - ./Farmers-Choice-FrontEnd/FrontEndappData:/app/seedData:cached
     environment:
       - NODE_ENV=development
       - PORT=3000
