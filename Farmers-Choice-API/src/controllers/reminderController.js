@@ -39,9 +39,20 @@ const deleteReminder = async (req, res) => {
   }
 };
 
+const updateReminder = async (req, res) => {
+  try {
+    const updated = await Reminder.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!updated) return res.status(404).json({ error: 'Reminder not found' });
+    res.status(200).json({ message: 'Reminder updated', reminder: updated });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update reminder', details: error.message });
+  }
+};
+
 module.exports = {
   createReminder,
   getAllReminders,
   getReminderById,
+  updateReminder,
   deleteReminder,
 };

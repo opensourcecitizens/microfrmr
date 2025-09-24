@@ -1,14 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {View,Text,Image,ScrollView,StyleSheet,FlatList,TouchableOpacity, SafeAreaView,Modal,TextInput,} from 'react-native';
 import { FontAwesome, MaterialIcons, Feather, MaterialCommunityIcons,} from '@expo/vector-icons';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
-import DashboardData from '../../FrontEndappData/dashboardData.json'; // Dashboard data
-import ModalData from '../../FrontEndappData/modalData.json'; // Modal data
-import ImageMap from '../../FrontEndappData/imageMap'; // Image map
+// Prefer backend data; provide small fallbacks for offline/demo use
+import ImageMap from '../../src/imageMap'; // Image map
+const ModalData = {
+  Active: { analytics: { growthRate: 'Good', temperature: '25C', soilMoisture: '30%', sunlight: 'High' }, animalsAnalytics: {} },
+  Yielding: { analytics: {}, animalsAnalytics: {} },
+  'On Tillage': { analytics: { soilPH: 6.5, organicMatter: 'Moderate', nutrientLevels: { nitrogen: 3, phosphorus: 2, potassium: 1 }, tillageProgress: { completion: '50%', soilAmmendments: 'Compost' } }, animalsAnalytics: {} }
+};
+const DashboardData = { cards: [] };
+import api from '../../src/api';
 
 const DashboardScreen = () => {
   const [selectedStatus, setSelectedStatus] = useState('Active');
+  const [farms, setFarms] = useState(DashboardData.cards || []);
+  const [loadingFarms, setLoadingFarms] = useState(false);
+  const [farmsError, setFarmsError] = useState(null);
+
+  useEffect(() => {
+    let mounted = true;
+    async function loadFarms() {
+      setLoadingFarms(true);
+      try {
+        const data = await api.getFarms();
+        const mapped = data.map((f) => ({
+          id: f._id || f.id,
+          title: f.name || f.storeName || 'Farm',
+          image: f.imageKey || 'Farm',
+          details: [f.location || f.address || ''],
+          status: f.status || 'Active',
+        }));
+        if (mounted) setFarms(mapped);
+      } catch (err) {
+        console.error('Failed to load farms', err);
+        if (mounted) setFarmsError(err.message);
+      } finally {
+        if (mounted) setLoadingFarms(false);
+      }
+    }
+    loadFarms();
+    return () => (mounted = false);
+  }, []);
 
   // --- Reminder Modal States ---
   const [reminderModalVisible, setReminderModalVisible] = useState(false);
@@ -46,7 +80,7 @@ const [marketPrices, setMarketPrices] = useState('');
   const [animalsData, setAnimalsData] = useState(ModalData[selectedStatus].animalsAnalytics || {});
 
   // Filter dashboard cards based on selectedStatus
-  const filteredCards = DashboardData.cards.filter(
+  const filteredCards = (farms.length ? farms : DashboardData.cards).filter(
     (card) => card.status === selectedStatus
   );
 
@@ -261,14 +295,29 @@ const [marketPrices, setMarketPrices] = useState('');
                     />
                   </TouchableOpacity>
                 )}
-                <TouchableOpacity style={styles.iconButton}>
+                <TouchableOpacity style={styles.iconButton} onPress={async () => {
+                  try {
+                    if (confirm && typeof confirm === 'function') {
+                      // no-op
+                    }
+                    // simple browser confirm fallback for web
+                    const ok = typeof window !== 'undefined' ? window.confirm('Delete this item?') : true;
+                    if (!ok) return;
+                    await api.deleteItem(item.id);
+                    // remove from local state
+                    setFarms((prev) => prev.filter((f) => f.id !== item.id));
+                  } catch (err) {
+                    console.error('Delete failed', err);
+                    alert('Delete failed: ' + err.message);
+                  }
+                }}>
                   <MaterialCommunityIcons
                     name="delete-outline"
                     size={wp('6.5%')}
                     color="#4EC09C"
                   />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.iconButton}>
+                <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('AddItem', { item })}>
                   <MaterialIcons
                     name="edit"
                     size={wp('6.5%')}

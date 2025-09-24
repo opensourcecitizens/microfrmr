@@ -2,14 +2,14 @@
 // This file defines the Mongoose schema for the MarketplaceItem model.
 // The MarketplaceItem model represents items available for sale in the marketplace.
 
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const marketplaceItemSchema = new mongoose.Schema({
   name: { type: String, required: true },
   description: { type: String },
   price: { type: Number, required: true },
-  seller: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  seller: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   available: { type: Boolean, default: true },
 }, { timestamps: true });
 
-export default mongoose.model('MarketplaceItem', marketplaceItemSchema);
+module.exports = mongoose.model('MarketplaceItem', marketplaceItemSchema);

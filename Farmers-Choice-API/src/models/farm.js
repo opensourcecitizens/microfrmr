@@ -1,11 +1,11 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const farmSchema = new mongoose.Schema({
   name: { type: String, required: true },
   location: { type: String, required: true },
-  owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   crops: [{ type: String }],
   animals: [{ type: String }],
 }, { timestamps: true });
 
-export default mongoose.model('Farm', farmSchema);
+module.exports = mongoose.model('Farm', farmSchema);

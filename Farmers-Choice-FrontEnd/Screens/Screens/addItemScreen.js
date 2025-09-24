@@ -12,14 +12,16 @@ import {
 import { Feather, FontAwesome } from '@expo/vector-icons';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import * as ImagePicker from 'expo-image-picker';
+import api from '../../src/api';
 
-export default function AddPost({ navigation }) {
-  const [storeName, setStoreName] = useState('');
+export default function AddPost({ navigation, route }) {
+  const editing = route?.params?.item;
+  const [storeName, setStoreName] = useState(editing?.storeName || '');
   const [storeAddress, setStoreAddress] = useState('');
   const [storeDetails, setStoreDetails] = useState('');
   const [description, setDescription] = useState('');
   const [status, setStatus] = useState('Active');
-  const [images, setImages] = useState([]);
+  const [images, setImages] = useState(editing?.images || []);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -30,28 +32,48 @@ export default function AddPost({ navigation }) {
     });
 
     if (!result.canceled) {
-      setImages([...images, result.assets[0].uri]);
+      const localUri = result.assets[0].uri;
+      try {
+        const uploadResp = await api.uploadImage(localUri);
+        // expect { url: 'http://...' }
+        const url = uploadResp.url || uploadResp.path || uploadResp.filePath || localUri;
+        setImages((prev) => [...prev, url]);
+      } catch (err) {
+        console.error('Upload failed', err);
+        alert('Image upload failed: ' + err.message);
+      }
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!storeName || !storeAddress || !description) {
       alert('Please fill in all required fields');
       return;
     }
     
-    const newPost = {
-      id: Date.now(),
-      storeName,
-      storeAddress,
-      storeDetails,
-      status,
+    const payload = {
+      name: storeName,
+      category: 'post',
+      price: 0,
+      quantity: 1,
+      farm: null,
+      description,
       images,
-      description
+      status,
     };
-
-    console.log('New Post:', newPost);
-    navigation.goBack();
+    try {
+      if (editing && editing.id) {
+        await api.updateItem(editing.id, payload);
+        alert('Post updated');
+      } else {
+        await api.createItem(payload);
+        alert('Post created');
+      }
+      navigation.goBack();
+    } catch (err) {
+      console.error('Failed to save post', err);
+      alert('Failed to save post: ' + err.message);
+    }
   };
 
   return (

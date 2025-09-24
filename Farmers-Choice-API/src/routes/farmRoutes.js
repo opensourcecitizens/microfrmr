@@ -1,12 +1,12 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const { createFarm, getFarms, getFarmById, updateFarm, deleteFarm } = require("../controllers/farmController");
+const farmController = require('../controllers/farmController');
 
 // Example CRUD
-router.get("/", getFarms);       // List farms
-router.post("/", createFarm);    // Add new farm
-router.get("/:id", getFarmById); // Get farm by ID
-router.put("/:id", updateFarm);  // Update farm
-router.delete("/:id", deleteFarm); // Delete farm
+router.get('/', farmController.getAllFarms);       // List farms
+router.post('/', farmController.createFarm);    // Add new farm
+router.get('/:id', farmController.getFarmById); // Get farm by ID
+router.put('/:id', farmController.updateFarm);  // Update farm
+router.delete('/:id', farmController.deleteFarm); // Delete farm
 
 module.exports = router;

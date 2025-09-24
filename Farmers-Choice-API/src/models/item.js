@@ -3,14 +3,17 @@
 // The Item model represents the items available for sale in the marketplace.
 // It includes fields for the item name, category, price, quantity, and a reference to the farm that sells the item.
 
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const itemSchema = new mongoose.Schema({
   name: { type: String, required: true },
   category: { type: String, required: true },
   price: { type: Number, required: true },
   quantity: { type: Number, required: true },
-  farm: { type: mongoose.Schema.Types.ObjectId, ref: 'Farm', required: true },
+  farm: { type: mongoose.Schema.Types.ObjectId, ref: 'Farm' },
+  images: [{ type: String }],
+  description: { type: String },
+  status: { type: String, default: 'available' },
 }, { timestamps: true });
 
-export default mongoose.model('Item', itemSchema);
+module.exports = mongoose.model('Item', itemSchema);

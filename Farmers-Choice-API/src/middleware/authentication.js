@@ -8,14 +8,20 @@
  * Replace with production-grade JWT verification (jsonwebtoken) when ready.
  */
 
+const jwt = require('jsonwebtoken');
+const JWT_SECRET = process.env.JWT_SECRET || 'dev_secret_change_me';
+
 const authenticate = (req, res, next) => {
-  const token = req.headers.authorization?.split(' ')[1] || req.headers.authorization || null;
-  if (!token) {
-    return res.status(401).json({ error: 'Unauthorized (dev stub)' });
+  const auth = req.headers.authorization || '';
+  const token = auth.startsWith('Bearer ') ? auth.split(' ')[1] : auth;
+  if (!token) return res.status(401).json({ error: 'Unauthorized' });
+  try {
+    const payload = jwt.verify(token, JWT_SECRET);
+    req.user = payload;
+    next();
+  } catch (err) {
+    return res.status(401).json({ error: 'Invalid token' });
   }
-  // DEV STUB: attach a fake user
-  req.user = { id: token.slice(0, 8), role: 'farmer', token };
-  next();
 };
 
 // alias to satisfy routes that expect `authenticateUser`

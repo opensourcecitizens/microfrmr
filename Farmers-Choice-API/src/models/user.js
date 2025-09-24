@@ -3,7 +3,7 @@
 // The user model is used to interact with the users collection in the database.
 // The user model is used to create, read, update and delete users in the database.
 
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -12,4 +12,4 @@ const userSchema = new mongoose.Schema({
   role: { type: String, enum: ['admin', 'farmer', 'buyer'], default: 'farmer' },
 }, { timestamps: true });
 
-export default mongoose.model('User', userSchema);
+module.exports = mongoose.model('User', userSchema);

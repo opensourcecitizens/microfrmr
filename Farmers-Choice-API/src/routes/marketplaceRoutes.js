@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const { createmarketplace, getmarketplaces, getmarketplaceById, updatemarketplace, deletemarketplace } = require("../controllers/marketplaceController");
+const marketplaceController = require("../controllers/marketplaceController");
 
-router.get("/", getMarketplacesItems);
-router.post("/", createMarketplaceItem);
+router.get("/", marketplaceController.getAllMarketplaceItems);
+router.post("/", marketplaceController.createMarketplaceItem);
 
 module.exports = router;
 // Marketplace routes currently only support listing and adding items.

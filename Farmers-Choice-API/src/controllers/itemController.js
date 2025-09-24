@@ -2,6 +2,14 @@ const Item = require('../models/item.js');
 
 const createItem = async (req, res) => {
   try {
+    const { name, price } = req.body;
+    if (!name) return res.status(400).json({ error: 'Name is required' });
+    if (price !== undefined && typeof Number(price) !== 'number') return res.status(400).json({ error: 'Price must be a number' });
+    // sanitize images
+    if (req.body.images && !Array.isArray(req.body.images)) req.body.images = [req.body.images];
+    const allowedStatus = ['available', 'active', 'yielding', 'on_tillage', 'On Tillage', 'Yielding'];
+    if (req.body.status && !allowedStatus.includes(req.body.status)) req.body.status = 'available';
+
     const newItem = await Item.create(req.body);
     res.status(201).json({ message: 'Item created successfully', item: newItem });
   } catch (error) {
@@ -32,6 +40,9 @@ const getItemById = async (req, res) => {
 
 const updateItem = async (req, res) => {
   try {
+    if (req.body.images && !Array.isArray(req.body.images)) req.body.images = [req.body.images];
+    const allowedStatus = ['available', 'active', 'yielding', 'on_tillage', 'On Tillage', 'Yielding'];
+    if (req.body.status && !allowedStatus.includes(req.body.status)) req.body.status = 'available';
     const item = await Item.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!item) {
       return res.status(404).json({ error: 'Item not found' });

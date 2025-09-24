@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  backend-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install backend deps
+        working-directory: Farmers-Choice-API
+        run: npm ci
+      - name: Run backend tests
+        working-directory: Farmers-Choice-API
+        run: npm test --silent
+  build-backend:
+    runs-on: ubuntu-latest
+    needs: backend-tests
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Docker image
+        run: docker build -t farmers-choice-api -f Farmers-Choice-API/Dockerfile ./

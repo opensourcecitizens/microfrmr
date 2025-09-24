@@ -4,17 +4,25 @@
   "description": "API for Farmers Choice application",
   "main": "src/app.ts",
   "scripts": {
-    "build": "tsc",
-    "start": "node dist/app.js",
-    "dev": "ts-node src/app.ts",
+  "build": "tsc",
+  "start": "node dist/app.js",
+    "dev": "node -r ts-node/register src/app.ts",
     "seed": "node scripts/seedDatabase.js",
     "test": "jest"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "setupFilesAfterEnv": ["<rootDir>/test/jest.setup.js"]
   },
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+  "morgan": "^1.10.0",
     "mongoose": "^5.13.23"
+    ,"bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.0",
+  "multer": "^1.4.4"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
@@ -22,10 +30,12 @@
     "@types/jest": "^26.0.0",
     "@types/node": "^14.14.31",
     "jest": "^26.6.3",
+    "supertest": "^6.3.3",
+  "mongodb-memory-server": "^8.12.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2"
   },
   "author": "Your Name",
-  "license": "MIT",
-  "type": "module"
+  "license": "MIT"
+  
 }

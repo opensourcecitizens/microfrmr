@@ -1,16 +1,13 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const { authenticateUser } = require("../middleware/authentication");
+const authController = require('../controllers/authController');
+const { authenticateUser } = require('../middleware/authentication');
 
-// Example placeholder login
-router.post("/login", (req, res) => {
-  res.send("Login route works!");
-});
+router.post('/register', authController.register);
+router.post('/login', authController.login);
 
-// Example protected route
-router.get("/profile", authenticateUser, (req, res) => {
-  res.send("Protected user profile route");
+router.get('/profile', authenticateUser, (req, res) => {
+  res.json({ user: req.user });
 });
 
 module.exports = router;
-// Auth routes typically include login and protected profile access.

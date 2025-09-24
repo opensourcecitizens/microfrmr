@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -15,7 +15,9 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import DetailsData from '../appData/detailsScreenData.json';
-import ImageMap from '../appData/imageMap';
+// Fallback local map; ideally backend returns full image URLs and this map can be removed.
+import ImageMap from '../../src/imageMap';
+import api from '../../src/api';
 
 export default function DetailsScreen() {
   const [comment, setComment] = useState('');
@@ -23,6 +25,38 @@ export default function DetailsScreen() {
   const [likes, setLikes] = useState({});
   const [shares, setShares] = useState({});
   const [views, setViews] = useState({});
+  const [posts, setPosts] = useState(DetailsData.posts || []);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let mounted = true;
+    async function loadItems() {
+      setLoading(true);
+      try {
+        const items = await api.getItems();
+        // Map backend items to the UI shape expected by this screen.
+        const mapped = items.map((it) => ({
+          id: it._id || it.id,
+          farmName: it.storeName || it.farmName || it.name || 'Store',
+          farmAddress: it.storeAddress || it.farmAddress || '',
+          farmDetails: it.storeDetails || it.description || '',
+          status: it.status || 'available',
+          images: it.images && it.images.length ? it.images : (it.imageKeys || ['image1.jpeg']),
+          profileImage: it.profileImage || 'profile.png',
+          description: it.description || it.storeDetails || '',
+        }));
+        if (mounted) setPosts(mapped);
+      } catch (err) {
+        console.error('Error loading items', err);
+        if (mounted) setError(err.message);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    }
+    loadItems();
+    return () => (mounted = false);
+  }, []);
 
   const handleLike = (postId) =>
     setLikes({ ...likes, [postId]: (likes[postId] || 0) + 1 });
@@ -69,13 +103,16 @@ export default function DetailsScreen() {
         showsHorizontalScrollIndicator={false}
         style={styles.carousel}
       >
-        {item.images.map((imageKey, index) => (
-          <Image
-            key={index}
-            source={ImageMap[imageKey]}
-            style={styles.carouselImage}
-          />
-        ))}
+        {item.images.map((imageKey, index) => {
+          const src = ImageMap[imageKey] || ImageMap['Image1'] || Object.values(ImageMap)[0];
+          return (
+            <Image
+              key={index}
+              source={src}
+              style={styles.carouselImage}
+            />
+          );
+        })}
       </ScrollView>
 
       {/* Interactive Icons Section */}
@@ -145,11 +182,23 @@ export default function DetailsScreen() {
   );
 
   return (
-    <FlatList
-      data={DetailsData.posts}
+    <>
+      {loading && (
+        <View style={{ padding: 16 }}>
+          <Text>Loading items...</Text>
+        </View>
+      )}
+      {error && (
+        <View style={{ padding: 16 }}>
+          <Text style={{ color: 'red' }}>Error: {error}</Text>
+        </View>
+      )}
+      <FlatList
+        data={posts}
       renderItem={renderPost}
       keyExtractor={(item) => item.id.toString()}
-    />
+      />
+    </>
   );
 }
 
