@@ -96,13 +96,9 @@ Walkthrough of what I changed and why:
 5. Updated `addItemScreen.js` to POST a new item using `api.createItem()` so posts created in the app are saved to the backend.
 6. Fixed a backend router file to ensure the `/api/items` routes point to the proper controller (prevents 500/require errors on the server).
 
-Next recommended improvements:
+Next steps:
 - Add authentication and attach tokens to API calls (the backend includes `authRoutes.js` but frontend currently doesn't use auth).
 - Implement file/image uploads (backend and frontend) so images are stored and returned as URLs rather than local keys.
 - Add optimistic UI updates and better error handling/retries for unreliable networks.
 - Add unit/integration tests for API helpers and controllers.
 
-If you'd like, I can now:
-- Wire another screen (marketplace or analytics) to the API.
-- Add PUT/DELETE helpers and integrate edit/delete buttons on the dashboard cards.
-- Fix `ts-node` startup by adding a small JS build step so you can run the backend easily in this environment.
