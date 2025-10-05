@@ -1,3 +1,31 @@
+# Node / JS
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.env
+
+# Editor/OS
+.vscode/
+.DS_Store
+
+# Expo / React Native / build
+.expo
+.expo-shared
+dist/
+build/
+android/
+ios/
+
+# Local database and storage (do not commit DB files)
+data/db/
+data/db/**
+uploads/
+uploads/**
+
+# Misc
+logs/
+*.log
 # Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
 
 # dependencies
