@@ -1,0 +1,59 @@
+{
+  "posts": [
+    {
+      "id": 1,
+      "farmName": "Full Belly Farm",
+      "farmAddress": "Richvale CA",
+      "farmDetails": "A certified organic farm producing fruits, vegetables, and nuts.",
+      "profileImage": "grapes",
+      "status": "On Tillage",
+      "images": ["lettuce", "bellpepper", "grapes"],
+      "description": "We're excited to share our latest harvest from our certified organic fields in Guinda, CA. This season, our orchards and gardens have been bursting with flavor—enjoy crisp apples, juicy peaches, vibrant"
+    },
+
+    {
+      "id": 2,
+      "farmName": "Landberg Family Farm",
+      "farmAddress": "Richvale, California",
+      "farmDetails": "A family-owned farm known for organic rice and sustainable practices.",
+       "profileImage": "orange",
+      "status": "On Tillage",
+      "images": ["spinach", "peas", "carrots"],
+      "description": "elegant Boutique brings elegance to your wardrobe!"
+    },
+
+    {
+      "id": 3,
+      "farmName": "Prairie Pride Poultry",
+      "farmAddress": "Lincoln,Nebraska",
+      "farmDetails": "A family-owned farm specializing in pasture-raised poultry",
+       "profileImage": "farm",
+      "status": "Active",
+      "images": ["egg", "eggtrays", "eggtray2", "eggs"],
+      "description": " we’ve got farm-fresh eggs ready for you! 🏡🥚 Collected daily, our eggs are rich in flavor, packed with nutrients, and come from happy, healthy hens raised on open pastures."
+    },
+
+    {
+      "id": 4,
+      "farmName": "Full Belly Farm",
+      "farmAddress": "Guinda,California",
+      "farmDetails": "A certified organic farm producing fruits  vegetables and nuts.",
+       "profileImage": "lemons",
+      "status": "Active",
+      "images": ["orange", "grapes", "javabanana"],
+      "description": "Come visit us at the farm, find us at your local farmers' market, or sign up for our CSA to enjoy fresh,fruits 🥕🌰"
+    },
+    {
+      "id": 5,
+      "farmName": "Texas Farm Bureau",
+      "farmAddress": "Austin,Texas",
+      "farmDetails": "A certified animal farm producing dairy products and beef.",
+       "profileImage": "lemons",
+      "status": "Yielding",
+      "images": ["sheep", "cows", "javaBanana"],
+      "description": "Come visit us at the farm, find us at your local farmers' market, or sign up for our CSA to enjoy fresh,fruits "
+    }
+
+
+  ]
+}

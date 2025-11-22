@@ -1,0 +1,97 @@
+{
+  "cropsAndAnimals": [
+    {
+      "id": "1",
+      "name": "Lettuce",
+      "image": "lettuce"
+    },
+    {
+      "id": "2",
+      "name": "Capsicum",
+      "image": "capsicum"
+    },
+    {
+      "id": "3",
+      "name": "Carrots",
+      "image": "carrots"
+    },
+    {
+      "id": "4",
+      "name": "Bunnies",
+      "image": "rabbit"
+    }
+  ],
+  "cards": [
+    {
+      "id": "1",
+      "image": "leafygreens",
+      "title": "Semi-Savoy Spinach",
+      "details": [
+        "Seed Variety: Carmel",
+        "Growth Time: 5 Months",
+        "Botanic Name:Spinacia oleracea"
+      ],
+      "status": "Active"
+    },
+    {
+      "id": "2",
+      "image": "chinesecabbage",
+      "title": "Chinese Cabbage",
+      "details": [
+        "Seed Variety: Romaine Lettuce",
+        "Breed: Green Towers",
+        "Growth Time: 4 Months",
+        "Botanic Name:Lactuca sativa var. longifolia"
+      ],
+      "status": "Yielding"
+    },
+    {
+      "id": "3",
+      "image": "javabanana",
+      "title": "Java Banana",
+      "details": [
+        "Seed Variety: Pisang batu",
+        "Breed: Horn Plantain",
+        "Growth Time: 1 year",
+        "Botanic Name: Musa balbisiana"
+      ],
+      "status": "Active"
+    },
+
+    {
+      "id": "4",
+      "image": "rabbit",
+      "title": "Rabbits",
+      "details": [
+        "Seed Variety: Meat Rabbits",
+        "Breed: NewZealand White",
+        "Growth Time: 4 Months"
+      ],
+      "status": "On Tillage"
+    },
+
+     {
+      "id": "5",
+      "image": "apple",
+      "title": "Apples",
+      "details": [
+        "Seed Variety: Meat Rabbits",
+        "Breed: NewZealand White",
+        "Growth Time: 4 Months"
+      ],
+      "status": "On Tillage"
+    },
+
+    {
+      "id": "6",
+      "image": "tomatofarm",
+      "title": "Tomatoes",
+      "details": [
+        "Seed Variety: Sun Gold",
+        "Breed: Beefsteak Tomatoes",
+        "Growth Time: 4 Months"
+      ],
+      "status": "Yielding"
+    }
+  ]
+}
