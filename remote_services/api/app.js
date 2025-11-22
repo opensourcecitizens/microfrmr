@@ -129,6 +129,7 @@ async function upsertUserProfile(req, res) {
 }
 
 async function getProductList(req, res) {
+    console.log('getProductList ..');
     //let results;
     mongodb.readProductList().then(async(cursor)=>{
         let results = [];
@@ -243,6 +244,7 @@ async function upsertFarmDetails(req, res) {
 
 //LISTINGS
 async function getListingsList(req, res) {
+     console.log('getListingsList  ..');
     //let results;
     mongodb.readListingsList().then(async(cursor)=>{
         let results = [];

@@ -20,26 +20,71 @@ const ERROR_CODE = "DB_100";
 //https://www.mongodb.com/docs/drivers/node/current/usage-examples/replaceOne/
 //https://www.mongodb.com/docs/drivers/node/current/usage-examples/updateMany/
 //https://www.mongodb.com/docs/drivers/node/current/usage-examples/updateOne/
-var  mongoUrl = "mongodb://localhost:27017";
-var client ;
+var  mongoUrl_ = "mongodb://localhost:27017";
+var client_ ;
 class DatabasePersist {
 
     constructor (mongoServerUri){
         if(mongoServerUri){
             console.log("initialize mongoUrl=",mongoServerUri);
-            mongoUrl = mongoServerUri;
+            this.mongoUrl_ = mongoServerUri;
         }
+    }
+   //todo create a client pooled connection mechanism that can cleanup or keep ready.
+    connect = async()=>{
+        // console.log("[MongoC] connect to mongoUrl_=",this.mongoUrl_);
+        if( !this.client_ || this.client_.s.hasBeenClosed ){
+            this.client_ = new MongoClient(this.mongoUrl_);
+            //client?.isConnected() was removed in v4
+            //reopen client
+            // console.warn("[MongoC] Mongo client is not open. Please open!");
+        }
+        //todo add state listener
+        console.log("[MongoC] Mongo client status open? ", !this.client_.hasBeenClosed);
+        return this;
+    }
+
+    isConnected = ()=>{
+         // console.log('[MongoC] isConnected? ',!this.client_.s.hasBeenClosed);
+         if( this.client_ ){
+             //client?.isConnected() was removed in v4
+             //reopen client
+             return !this.client_.s.hasBeenClosed;
+         }
+         return false;
+    }
+
+    close = async()=>{
+        console.log('[MongoC] MongoClient.close called!!!!!!!',this.client_.s);
+        if( this.client_ ){
+            //client?.isConnected() was removed in v4
+            //reopen client
+            return await this.client_.close().then(async()=>{
+                // console.log('[MongoC] close hasBeenClosed ',this.client_.s.hasBeenClosed);
+                return await this.client_.s.hasBeenClosed;
+            });
+        }
+        return true;
+    }
+
+    getReadyClient = async() => {
+        // console.log('[MongoC] getReadyClient isConnected?',await this.isConnected());
+        //return await this.connect();
+        if(!await this.isConnected()){
+            await this.connect();
+        }
+       return this.client_;
     }
 
     getMongoClient(){
-        client = new MongoClient(mongoUrl);
-        if( !client ){
+        this.client_ = new MongoClient(this.mongoUrl_);
+        if( !client_ ){
             //client?.isConnected() was removed in v4
             //reopen client
             console.warn("Mongo client is not open. Please open!");
         }
 
-        return client;
+        return this.client_;
     }
 
     /////////////// PRODUCTS /////////////////////
@@ -47,7 +92,7 @@ class DatabasePersist {
     upsertProductDetails = async(timestamp, productObject )=>{
           var result;
           try{
-              client = new MongoClient(mongoUrl);
+              let client = await this.getReadyClient();
 
               const database = client.db(DB_NAME);
               const productCollection = database.collection(COLLECTION_USERS);
@@ -71,7 +116,7 @@ class DatabasePersist {
             console.error(error);
             throw Error(ERROR_CODE+"  upsertProductDetails error"+error);
          }finally{
-            client.close();
+            //client.close();
          }
           return result;
     }
@@ -79,7 +124,7 @@ class DatabasePersist {
     readProductList = async()=>{
           var cursor;
           try{
-              client = new MongoClient(mongoUrl);
+              let client = await this.getReadyClient();
               const database = client.db(DB_NAME);
               const users = database.collection(COLLECTION_PRODUCTS);
               const query = {};
@@ -87,7 +132,7 @@ class DatabasePersist {
                   // Sort matched documents in descending order by update_timestamp
                   sort: { "update_timestamp": -1 },
                   // exclude only the `updated_by` , 'authorized_to', `expiration_timestamp` fields in the returned document
-                  projection: { id: 1, type_id: 1, title: 1, update_timestamp: 1 },
+                  projection: { id: 1, type_id: 1, title: 1, status: 1, update_timestamp: 1, profile_image: 1 },
               };
 
                cursor = await users.find(query, options);
@@ -95,11 +140,11 @@ class DatabasePersist {
                 //todo wait for cursor to empty? - use a listener to close
                 cursor.on('end', () => {
                       console.log('Cursor finished');
-                      client.close();
+                      //client.close();
                 });
                 cursor.on('error', (err) => {
                   console.error(err);
-                  client.close();
+                  //client.close();
                 });
          }catch(error){
             console.error(error);
@@ -115,7 +160,7 @@ class DatabasePersist {
     readProductDetails = async(productId)=>{
           var oneRes;
           try{
-              client = new MongoClient(mongoUrl);
+              let client = await this.getReadyClient();
               const database = client.db(DB_NAME);
               const productCollection = database.collection(COLLECTION_PRODUCTS);
               const query = { id: productId };
@@ -124,7 +169,8 @@ class DatabasePersist {
                   sort: { "update_timestamp": -1 },
                   // Include only the `id`, `name`,'email', 'admin' fields in the returned document
                   projection: { id: 1, type_id: 1, title: 1, update_timestamp: 1, updated_by: 1,
-                            expiration_timestamp: 1, authorized_to: 1 },
+                            expiration_timestamp: 1, authorized_to: 1, images: 1, videos: 1,
+                            profile_image: 1, images: 1, videos: 1, status: 1, details: 1 },
               };
 
               //const oneRes = await productCollection.findOne(query, options);
@@ -135,7 +181,7 @@ class DatabasePersist {
              console.error(error);
              throw Error(ERROR_CODE+"  readProductDetails error"+error);
           }finally{
-             client.close();
+             //client.close();
           }
 
           return oneRes;
@@ -147,7 +193,7 @@ class DatabasePersist {
           console.log('upsertUserProfile userObject =', userObject);
           var result;
           try{
-              client = new MongoClient(mongoUrl);
+              let client = await this.getReadyClient();
 
               const database = client.db(DB_NAME);
               const createProposal = database.collection(COLLECTION_USERS);
@@ -161,12 +207,12 @@ class DatabasePersist {
                 result = await createProposal.insertOne(doc);
               }
 
-              client.close();
+              //client.close();
           }catch(error){
             console.error(error);
             throw Error(ERROR_CODE+"  upsertUserProfile error"+error);
           }finally{
-            client.close();
+            //client.close();
           }
           return result;
     }
@@ -174,7 +220,7 @@ class DatabasePersist {
     readUsersList = async()=>{
         var cursor;
         try{
-              client = new MongoClient(mongoUrl);
+              let client = await this.getReadyClient();
               const database = client.db(DB_NAME);
               const users = database.collection(COLLECTION_USERS);
               const query = {};
@@ -191,11 +237,11 @@ class DatabasePersist {
               //todo wait for cursor to empty? - use a listener to close
               cursor.on('end', () => {
                     console.log('Cursor finished');
-                    client.close();
+                    //client.close();
               });
               cursor.on('error', (err) => {
                 console.error(err);
-                client.close();
+                //client.close();
               });
           }catch(error){
             console.error(error);
@@ -211,7 +257,7 @@ class DatabasePersist {
           var oneRes;
 
           try{
-              client = new MongoClient(mongoUrl);
+              let client = await this.getReadyClient();
               const database = client.db(DB_NAME);
               var users = database.collection(COLLECTION_USERS);
 
@@ -233,7 +279,7 @@ class DatabasePersist {
             console.error(error);
             throw Error(ERROR_CODE+"  readUserProfile error"+error);
           }finally{
-            client.close();
+            //client.close();
           }
           return oneRes;
     }
@@ -243,7 +289,7 @@ class DatabasePersist {
     upsertFarmDetails = async(timestamp, farmObject )=>{
           var result;
           try{
-              client = new MongoClient(mongoUrl);
+              let client = await this.getReadyClient();
 
               const database = client.db(DB_NAME);
               const farmCollection = database.collection(COLLECTION_FARMS);
@@ -270,7 +316,7 @@ class DatabasePersist {
             console.error(error);
             throw Error(ERROR_CODE+"  upsertFarmDetails error"+error);
          }finally{
-            client.close();
+            //client.close();
          }
           return result;
     }
@@ -278,7 +324,7 @@ class DatabasePersist {
     readFarmList = async()=>{
           var cursor;
           try{
-              client = new MongoClient(mongoUrl);
+              let client = await this.getReadyClient();
               const database = client.db(DB_NAME);
               const farmCollection = database.collection(COLLECTION_FARMS);
               const query = {};
@@ -293,11 +339,11 @@ class DatabasePersist {
                 //todo wait for cursor to empty? - use a listener to close
                 cursor.on('end', () => {
                       console.log('Cursor finished');
-                      client.close();
+                      //client.close();
                 });
                 cursor.on('error', (err) => {
                   console.error(err);
-                  client.close();
+                  //client.close();
                 });
           }catch(error){
             console.error(error);
@@ -313,15 +359,16 @@ class DatabasePersist {
     readFarmDetails = async(productId)=>{
           var oneRes;
           try{
-              client = new MongoClient(mongoUrl);
+              let client = await this.getReadyClient();
               const database = client.db(DB_NAME);
-              const productCollection = database.collection(COLLECTION_PRODUCTS);
+              const productCollection = database.collection(COLLECTION_FARMS);
               const query = { id: productId };
               const options = {
                   // Sort matched documents in descending order by rating
                   sort: { $natural: -1 },
                   // Include only the `id`, `name`,'email', 'admin' fields in the returned document
                   projection: { id: 1, name: 1, email: 1, phone: 1,address: 1, geoId:1,
+                                profile_image: 1, images: 1,
                                update_timestamp: 1, updated_by: 1, expiration_timestamp: 1, authorized_to: 1 },
               };
 
@@ -333,7 +380,7 @@ class DatabasePersist {
              console.error(error);
              throw Error(ERROR_CODE+"  readProductDetails error"+error);
           }finally{
-             client.close();
+             //client.close();
           }
 
           return oneRes;
@@ -343,7 +390,7 @@ class DatabasePersist {
     upsertListingDetails = async(timestamp, listingObject )=>{
           var result;
           try{
-              client = new MongoClient(mongoUrl);
+              let client = await this.getReadyClient();
               const database = client.db(DB_NAME);
               const listingCollection = database.collection(COLLECTION_LISTINGS);
               const doc = {
@@ -370,7 +417,7 @@ class DatabasePersist {
             console.error(error);
             throw Error(ERROR_CODE+"  upsertListingDetails error"+error);
          }finally{
-            client.close();
+            //client.close();
          }
          return result;
     }
@@ -378,7 +425,7 @@ class DatabasePersist {
     readListingsList = async()=>{
           var cursor;
           try{
-              client = new MongoClient(mongoUrl);
+              let client = await this.getReadyClient();
               const database = client.db(DB_NAME);
               const listingCollection = database.collection(COLLECTION_LISTINGS);
               const query = {};
@@ -386,18 +433,18 @@ class DatabasePersist {
                   // Sort matched documents in descending order by update_timestamp
                   sort: { "update_timestamp": -1 },
                   // exclude only the `updated_by` , 'authorized_to', `expiration_timestamp` fields in the returned document
-                  projection: { id: 1, title: 1, products: 1, images: 1 },
+                  projection: { id: 1, title: 1, products: 1, profile_image: 1, images: 1, listing_agent: 1, farm_id: 1 },
               };
               cursor = await listingCollection.find(query, options);
               //todo wait for cursor to empty? - use a listener to close
               cursor.on('end', () => {
                       console.log('Cursor finished');
-                      client.close();
+                      //client.close();
               });
 
               cursor.on('error', (err) => {
                  console.error(err);
-                 client.close();
+                 //client.close();
               });
 
          }catch(error){
@@ -414,15 +461,17 @@ class DatabasePersist {
     readListingDetails = async(listingId)=>{
           var oneRes;
           try{
-              client = new MongoClient(mongoUrl);
+              let client = await this.getReadyClient();
               const database = client.db(DB_NAME);
-              const productCollection = database.collection(COLLECTION_PRODUCTS);
+              const productCollection = database.collection(COLLECTION_LISTINGS);
               const query = { id: listingId };
               const options = {
                   // Sort matched documents in descending order by rating
-                  sort: { $natural: -1 },
+                  //sort: { $natural: -1 },
+                  sort: { "update_timestamp": -1 },
                   // Include only the `id`, `name`,'email', 'admin' fields in the returned document
-                  projection: { id: 1, title: 1, listing_agent: 1, description: 1,products: 1, images:1, videos: 1,
+                  projection: { id: 1, title: 1, listing_agent: 1, description: 1,products: 1, profile_image: 1,
+                                farm_id: 1, images:1, videos: 1,
                                update_timestamp: 1, updated_by: 1, expiration_timestamp: 1, authorized_to: 1 },
               };
 
@@ -434,7 +483,7 @@ class DatabasePersist {
              console.error(error);
              throw Error(ERROR_CODE+"  readListingDetails error"+error);
           }finally{
-             client.close();
+             //client.close();
           }
 
           return oneRes;
@@ -444,7 +493,7 @@ class DatabasePersist {
     upsertConnectionDetails = async(timestamp, connectionObject )=>{
           var result;
           try{
-              client = new MongoClient(mongoUrl);
+              let client = await this.getReadyClient();
 
               const database = client.db(DB_NAME);
               const connectionCollection = database.collection(COLLECTION_CONNECTIONS);
@@ -466,7 +515,7 @@ class DatabasePersist {
             console.error(error);
             throw Error(ERROR_CODE+"  upsertConnectionDetails error"+error);
          }finally{
-            client.close();
+            //client.close();
          }
           return result;
     }
@@ -474,7 +523,7 @@ class DatabasePersist {
     readConnectionsList = async()=>{
           var cursor;
           try{
-              client = new MongoClient(mongoUrl);
+              let client = await this.getReadyClient();
               const database = client.db(DB_NAME);
               const connectionCollection = database.collection(COLLECTION_CONNECTIONS);
               const query = {};
@@ -489,11 +538,11 @@ class DatabasePersist {
                 //todo wait for cursor to empty? - use a listener to close
                 cursor.on('end', () => {
                       console.log('Cursor finished');
-                      client.close();
+                      //client.close();
                 });
                 cursor.on('error', (err) => {
                   console.error(err);
-                  client.close();
+                  //client.close();
                 });
          }catch(error){
             console.error(error);
@@ -509,7 +558,7 @@ class DatabasePersist {
     readConnectionDetails = async(connectionId)=>{
           var oneRes;
           try{
-              client = new MongoClient(mongoUrl);
+              let client = await this.getReadyClient();
               const database = client.db(DB_NAME);
               const connectionCollection = database.collection(COLLECTION_CONNECTIONS);
               const query = { id: connectionId };
@@ -529,7 +578,7 @@ class DatabasePersist {
              console.error(error);
              throw Error(ERROR_CODE+"  readConnectionDetails error"+error);
           }finally{
-             client.close();
+             //client.close();
           }
 
           return oneRes;
@@ -540,7 +589,7 @@ class DatabasePersist {
     upsertCommentsDetails = async(timestamp, commentsObject )=>{
           var result;
           try{
-              client = new MongoClient(mongoUrl);
+              let client = await this.getReadyClient();
 
               const database = client.db(DB_NAME);
               const commentsCollection = database.collection(COLLECTION_COMMENTS);
@@ -563,7 +612,7 @@ class DatabasePersist {
             console.error(error);
             throw Error(ERROR_CODE+"  upsertCommentsDetails error"+error);
          }finally{
-            client.close();
+            //client.close();
          }
           return result;
     }
@@ -571,7 +620,7 @@ class DatabasePersist {
     readCommentsList = async()=>{
           var cursor;
           try{
-              client = new MongoClient(mongoUrl);
+              let client = await this.getReadyClient();
               const database = client.db(DB_NAME);
               const commentsCollection = database.collection(COLLECTION_COMMENTS);
               const query = {};
@@ -586,11 +635,11 @@ class DatabasePersist {
                 //todo wait for cursor to empty? - use a listener to close
                 cursor.on('end', () => {
                       console.log('Cursor finished');
-                      client.close();
+                      //client.close();
                 });
                 cursor.on('error', (err) => {
                   console.error(err);
-                  client.close();
+                  //client.close();
                 });
          }catch(error){
             console.error(error);
@@ -606,7 +655,7 @@ class DatabasePersist {
     readCommentsDetails = async(commentId)=>{
           var oneRes;
           try{
-              client = new MongoClient(mongoUrl);
+              let client = await this.getReadyClient();
               const database = client.db(DB_NAME);
               const commentsCollection = database.collection(COLLECTION_COMMENTS);
               const query = { id: commentId };
@@ -626,7 +675,7 @@ class DatabasePersist {
              console.error(error);
              throw Error(ERROR_CODE+"  readCommentsDetails error"+error);
           }finally{
-             client.close();
+             //client.close();
           }
 
           return oneRes;

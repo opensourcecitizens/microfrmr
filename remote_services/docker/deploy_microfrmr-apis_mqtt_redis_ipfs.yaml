@@ -58,7 +58,8 @@ services:
         condition: service_started #service_healthy
     volumes:
       - ./ipfsseed:/ipfsseed
-      - ../api/public/samples:/ipfsseed/samples
+      #- ../api/public/samples:/ipfsseed/samples
+      - ./ipfsseed/samples:/ipfsseed/samples
       - ../mediaserver/public/samples:/ipfsseed/samples
     networks:
       - media-net
@@ -89,7 +90,7 @@ services:
       - ./dataseed:/mongo-seed # maps local `./dataseed to container /mongo-seed
     command: sh -c " \
       chmod +x /mongo-seed/import.sh  && \
-      ls -l /mongo-seed/import.sh && \
+      ls -l /mongo-seed/ && \
       /mongo-seed/import.sh \ "
     networks:
       - db
