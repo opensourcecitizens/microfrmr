@@ -16,7 +16,8 @@ import {
 } from 'react-native-responsive-screen';
 import DetailsData from '../appData/detailsScreenData.json';
 import ImageMap from '../appData/imageMap';
-import ImageMap from '../components/ImageHandler';
+import ImageHandler from '../components/ImageHandler';
+import ApiCaller from '../appData/ApiCaller'
 
 export default function DetailsScreen() {
   const [comment, setComment] = useState('');
@@ -150,7 +151,8 @@ export default function DetailsScreen() {
     <FlatList
       data={
       //todo add ApiCaller method here
-      DetailsData.posts
+        DetailsData.posts
+        //ApiCaller.getProductSummaryList()
       }
       renderItem={renderPost}
       keyExtractor={(item) => item.id.toString()}

@@ -1,5 +1,5 @@
 
-import { ERR_100, ERR_200, ERR_300, API_URL, IPFS_URL } from '/constants';
+import { ERR_100, ERR_200, ERR_300, API_URL, IPFS_URL } from '../constants';
 
 const api_url = API_URL;
 const ipfsUrl = IPFS_URL;
@@ -46,6 +46,7 @@ const getProductSummaryList = async () => {
         }
         const res = await response.json();
         if(res && res.data){
+            console.log('getProductSummaryList res',res );
             return res.data;
         }else return ;
     }catch(error){

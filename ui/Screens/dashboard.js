@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import {View,Text,Image,ScrollView,StyleSheet,FlatList,TouchableOpacity, SafeAreaView,Modal,TextInput,} from 'react-native';
-import { FontAwesome, MaterialIcons, Feather, MaterialCommunityIcons,} from '@expo/vector-icons';
+import { FontAwesome } from "@react-native-vector-icons/fontawesome";
+import { Feather } from "@react-native-vector-icons/feather";
+import { MaterialIcons, MaterialCommunityIcons } from "@react-native-vector-icons/material-icons";
+
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 import DashboardData from '../appData/dashboardData.json'; // Dashboard data

@@ -1,0 +1,63 @@
+# Dockerfile
+
+# Use an official mtini.io/nodejdk17androidndk runtime as a parent image
+# Build: docker buildx build . -t prelimtek/mcrfrmr:0.0.1-arm64 -f ./ui/docker/mcrfrmr-Dockerfile --platform linux/arm64
+# use this after pushing -> FROM prelimtek/nodejdk17androidndk:0.0.1-amd64
+# FROM prelimtek/nodejdk17androidndk:0.0.1-arm64
+#FROM  mtini.io/nodejdk17androidndk:0.0.1-arm64-v86
+FROM  mtini.io/nodejdk17androidndk:0.0.1-arm64
+
+RUN apt-get update
+RUN apt-get install -y build-essential checkinstall libssl-dev
+#RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.35.1/install.sh | bash
+SHELL ["/bin/bash", "--login", "-c"]
+
+#RUN nvm install
+
+# Set the working directory to /app
+WORKDIR /app
+
+# Copy the entire app directory to the working directory
+ADD ./ui .
+
+# Install app dependencies
+RUN npm install
+#RUN npm ci --force
+#RUN npm ci
+
+#RUN yarn install
+#RUN npx expo update
+
+# Build the app for production
+#RUN npx react-native bundle --platform ios --dev false --entry-file index.js --bundle-output ios/main.jsbundle --assets-dest ios/assets
+#RUN npx react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res
+
+# EXPO build project - android and ios
+# RUN npx expo prebuild -p android
+
+# vanilla react native build project - android and ios
+# RUN npx react-native build-android
+
+# gradle build android
+#RUN cd ./android
+#WORKDIR /app/android
+#RUN ./gradlew bundleRelease
+#RUN ./gradlew build  --stacktrace --scan
+
+# show content
+RUN pwd
+CMD ls -l
+
+# Expose port 8080 for the React Native packager
+#EXPOSE 8080
+
+# Start the app
+#CMD ["npx", "react-native", "start"]
+#CMD ["npx", "expo", "run:android"]
+# EXPO
+#CMD ["npx", "expo", "start"]
+# vanilla
+CMD ["npx", "react-native", "start"]
+### entry point = restart dev
+#ENTRYPOINT [ "/bin/bash", "-c", "ls -l"]
+#ENTRYPOINT ["/bin/bash","-c","node -v"]

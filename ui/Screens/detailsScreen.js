@@ -9,7 +9,8 @@ import {
   ScrollView,
   FlatList,
 } from 'react-native';
-import { Feather, FontAwesome } from '@expo/vector-icons';
+import { FontAwesome } from "@react-native-vector-icons/fontawesome";
+import { Feather } from "@react-native-vector-icons/feather";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,

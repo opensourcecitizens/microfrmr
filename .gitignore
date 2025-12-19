@@ -4,7 +4,8 @@
 node_modules/
 
 #ide
-.idea/
+.idea
+.idea/**
 
 # Expo
 .expo/
@@ -37,3 +38,7 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+#output
+ui/android
+ui/ios

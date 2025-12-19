@@ -8,14 +8,14 @@ WORKDIR /app
 
 # Copy the package.json and yarn.lock files to the working directory
 #COPY package.json yarn.lock ./
-ADD ./package.json ./
+#ADD ./package.json ./
 #ADD ./package-lock.json ./
+
+# Copy the entire app directory to the working directory
+ADD ../ui .
 
 # Install app dependencies
 RUN yarn install --frozen-lockfile
-
-# Copy the entire app directory to the working directory
-COPY .. .
 
 # Build the app for production
 RUN npx react-native bundle --platform ios --dev false --entry-file index.js --bundle-output ios/main.jsbundle --assets-dest ios/assets

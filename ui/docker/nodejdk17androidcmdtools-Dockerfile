@@ -1,13 +1,14 @@
 # Dockerfile
 
 # x86-64 :
-# docker buildx build . -t mtini.io/nodejdk17androidndk:0.0.1-x86-64 -f ./nodejdk17androidndk-Dockerfile --platform linux/x86-64
+# docker buildx build . -t mtini.io/nodejdk17androidndk:0.0.1-x86-64 -f ./nodejdk17androidcmdtools-Dockerfile --platform linux/x86-64
 # amd64
-# docker buildx build . -t mtini.io/nodejdk17androidndk:0.0.1-amd64 -f ./nodejdk17androidndk-Dockerfile --platform linux/amd64
+# docker buildx build . -t mtini.io/nodejdk17androidndk:0.0.1-amd64 -f ./nodejdk17androidcmdtools-Dockerfile --platform linux/amd64
 #arm64-v8a
-# docker buildx build . -t mtini.io/nodejdk17androidndk:0.0.1-arm64-v8a -f ./nodejdk17androidndk-Dockerfile --platform linux/arm64-v8a
+# docker buildx build . -t mtini.io/nodejdk17androidndk:0.0.1-arm64-v8a -f ./nodejdk17androidcmdtools-Dockerfile --platform linux/arm64-v8a
 #arm64-v86
-# docker buildx build . -t mtini.io/nodejdk17androidndk:0.0.1-arm64-v86 -f ./nodejdk17androidndk-Dockerfile --platform linux/arm64-v86
+# docker buildx build . -t mtini.io/nodejdk17androidndk:0.0.1-arm64-v86 -f ./nodejdk17androidcmdtools-Dockerfile --platform linux/arm64-v86
+# docker buildx build . -t mtini.io/nodejdk17androidndk:0.0.1-arm64 -f ./nodejdk17androidcmdtools-Dockerfile --platform linux/arm64
 FROM node:22.9.0
 
 ARG TARGETPLATFORM
@@ -54,7 +55,9 @@ RUN sdkmanager --list
 # find current version
 RUN sdkmanager --list | grep build-tools
 #testing this emulator download - failing here because package cannot be found
-RUN sdkmanager "emulator"
-RUN sdkmanager "build-tools;30.0.3" "platform-tools" "platforms;android-30" "tools"
+#RUN sdkmanager "emulator"
+#RUN sdkmanager --channel=3 emulator
+#RUN sdkmanager "build-tools;30.0.3" "platform-tools" "platforms;android-30" "tools"
 #RUN sdkmanager "build-tools;34.0.0" "platform-tools" "platforms;android-34" "tools"
-RUN sdkmanager --licenses
+#RUN sdkmanager --licenses
+RUN yes | sdkmanager --licenses

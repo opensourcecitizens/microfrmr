@@ -9,9 +9,11 @@ import {
   SafeAreaView, 
   Image 
 } from 'react-native';
-import { Feather, FontAwesome } from '@expo/vector-icons';
+import { FontAwesome } from "@react-native-vector-icons/fontawesome";
+import { Feather } from "@react-native-vector-icons/feather";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import * as ImagePicker from 'expo-image-picker';
+//import * as ImagePicker from 'expo-image-picker';
+import * as ImagePicker from 'react-native-image-picker';
 import ImageCIDMap from '../appData/imageCIDMap';
 import {ImageViewer} from '../components/ImageHandler';
 

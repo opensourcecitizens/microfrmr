@@ -30,7 +30,10 @@ ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-${TARGETARCH}
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
 ENV ANDROID_SDK_TOOLS_VERSION="9477386"
 
+# Install npm - original
 RUN npm install -g npm@10.2.3
+
+RUN npm -v
 
 # prep ANDROID_HOME
 RUN apt-get install -y unzip make # NDK stuff
@@ -44,7 +47,7 @@ RUN tar xf android-sdk_r24.4.1-linux.tgz
 # Get NDK (https://developer.android.com/ndk/downloads/index.html) for ${NDKTARGETARCH}
 
 RUN if [ "$TARGETARCH" = "arm64" ]; then \
-wget http://dl.google.com/android/ndk/android-ndk-r28b-darwin.dmg -O android-ndk.dmg \
+wget http://dl.google.com/android/ndk/android-ndk-r28b-darwin.dmg -O android-ndk.dmg; \
 chmod a+x android-ndk.dmg \
 ./android-ndk.dmg; \
 else \
