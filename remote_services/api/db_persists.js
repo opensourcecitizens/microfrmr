@@ -13,6 +13,7 @@ const COLLECTION_LISTINGS = "listings";
 const COLLECTION_FARMS = "farms";
 const COLLECTION_PRODUCTS = "products";
 const COLLECTION_USERS = "users";
+const COLLECTION_MEDIA_FILES = "media_files";
 
 const ERROR_CODE = "DB_100";
 
@@ -681,8 +682,311 @@ class DatabasePersist {
           return oneRes;
     }
 
-    //MEDIA - IMAGES - associated with userId/appId , url, CID
+    ///////////////////// MEDIA FILES ////////////////////////
+    
+    upsertMediaMetadata = async(mediaObject) => {
+      var result;
+      try {
+        let client = await this.getReadyClient();
+        const database = client.db(DB_NAME);
+        const mediaCollection = database.collection(COLLECTION_MEDIA_FILES);
+        
+        const doc = {
+          id: mediaObject.id || Date.now(),
+          parentId: mediaObject.parentId,
+          parentType: mediaObject.parentType, // 'user', 'farm', 'listing', 'product'
+          ipfsCID: mediaObject.ipfsCID,
+          fileName: mediaObject.fileName,
+          mimeType: mediaObject.mimeType,
+          fileSize: mediaObject.fileSize,
+          uploadedAt: mediaObject.uploadedAt || Date.now(),
+          uploadedBy: mediaObject.uploadedBy,
+          publicUrl: mediaObject.publicUrl,
+          pinned: mediaObject.pinned || false
+        };
+        
+        if (doc.id && mediaObject.isUpdate) {
+          result = await mediaCollection.updateOne({id: doc.id}, {$set: doc});
+        } else {
+          result = await mediaCollection.insertOne(doc);
+        }
+      } catch (error) {
+        console.error(error);
+        throw Error(ERROR_CODE + "  upsertMediaMetadata error" + error);
+      }
+      return result;
+    }
 
+    readMediaByParent = async(parentType, parentId) => {
+      var oneRes;
+      try {
+        let client = await this.getReadyClient();
+        const database = client.db(DB_NAME);
+        const mediaCollection = database.collection(COLLECTION_MEDIA_FILES);
+        
+        const query = {parentType, parentId};
+        const options = {
+          sort: {"uploadedAt": -1},
+          projection: {id: 1, ipfsCID: 1, fileName: 1, mimeType: 1, publicUrl: 1, uploadedAt: 1}
+        };
+        
+        const cursor = await mediaCollection.find(query, options);
+        oneRes = await cursor.toArray();
+        cursor.close();
+      } catch (error) {
+        console.error(error);
+        throw Error(ERROR_CODE + "  readMediaByParent error" + error);
+      }
+      return oneRes;
+    }
+
+    ///////////////// ENHANCED USER PROFILE ////////////////////////
+    
+    upsertEnhancedUserProfile = async(userObject) => {
+      var result;
+      try {
+        let client = await this.getReadyClient();
+        const database = client.db(DB_NAME);
+        const userCollection = database.collection(COLLECTION_USERS);
+        
+        const doc = {
+          id: userObject.id,
+          name: userObject.name,
+          email: userObject.email,
+          phone: userObject.phone || '',
+          admin: userObject.admin || false,
+          // Enhanced fields
+          bio: userObject.bio || '',
+          profileImageCid: userObject.profileImageCid || null,
+          profileImageUrl: userObject.profileImageUrl || null,
+          verified: userObject.verified || false,
+          farmCount: userObject.farmCount || 0,
+          ratings: userObject.ratings || {avg: 0, count: 0},
+          socialLinks: userObject.socialLinks || {},
+          // Metadata
+          update_timestamp: Date.now(),
+          created_timestamp: userObject.created_timestamp || Date.now()
+        };
+        
+        if (doc.id) {
+          result = await userCollection.updateOne({id: doc.id}, {$set: doc});
+        } else {
+          result = await userCollection.insertOne(doc);
+        }
+      } catch (error) {
+        console.error(error);
+        throw Error(ERROR_CODE + "  upsertEnhancedUserProfile error" + error);
+      }
+      return result;
+    }
+
+    readEnhancedUserProfile = async(userId) => {
+      var oneRes;
+      try {
+        let client = await this.getReadyClient();
+        const database = client.db(DB_NAME);
+        const userCollection = database.collection(COLLECTION_USERS);
+        
+        const query = {id: userId};
+        const options = {
+          sort: {$natural: -1},
+          projection: {
+            id: 1, name: 1, email: 1, phone: 1, admin: 1,
+            bio: 1, profileImageCid: 1, profileImageUrl: 1, verified: 1,
+            farmCount: 1, ratings: 1, socialLinks: 1, update_timestamp: 1
+          }
+        };
+        
+        const cursor = await userCollection.find(query, options).limit(1);
+        oneRes = await cursor.toArray();
+        cursor.close();
+      } catch (error) {
+        console.error(error);
+        throw Error(ERROR_CODE + "  readEnhancedUserProfile error" + error);
+      }
+      return oneRes;
+    }
+
+    ///////////////////// ENHANCED LISTINGS (with analytics fields) ////////////////////////
+    
+    upsertEnhancedListingDetails = async(listingObject) => {
+      var result;
+      try {
+        let client = await this.getReadyClient();
+        const database = client.db(DB_NAME);
+        const listingCollection = database.collection(COLLECTION_LISTINGS);
+        
+        const doc = {
+          id: listingObject.id || Date.now(),
+          title: listingObject.title,
+          description: listingObject.description || '',
+          listingAgent: listingObject.listingAgent,
+          products: listingObject.products || [],
+          farmId: listingObject.farmId,
+          // New analytics-ready fields
+          category: listingObject.category || 'general',
+          quantity: listingObject.quantity || 0,
+          unit: listingObject.unit || 'units',
+          pricePerUnit: listingObject.pricePerUnit || 0,
+          currency: listingObject.currency || 'USD',
+          images: listingObject.images || [],
+          videos: listingObject.videos || [],
+          availability: listingObject.availability || 'available', // available, sold, expired
+          expiresAt: listingObject.expiresAt || Date.now() + 30*24*60*60*1000,
+          location: {
+            geoId: listingObject.location?.geoId || '',
+            address: listingObject.location?.address || '',
+            coordinates: listingObject.location?.coordinates || null // [lat, lng]
+          },
+          // Metadata
+          update_timestamp: Date.now(),
+          updated_by: listingObject.updated_by,
+          created_timestamp: listingObject.created_timestamp || Date.now(),
+          authorized_to: listingObject.authorized_to || []
+        };
+        
+        if (listingObject.id && !listingObject.isNew) {
+          result = await listingCollection.updateOne({id: doc.id}, {$set: doc});
+        } else {
+          result = await listingCollection.insertOne(doc);
+        }
+      } catch (error) {
+        console.error(error);
+        throw Error(ERROR_CODE + "  upsertEnhancedListingDetails error" + error);
+      }
+      return result;
+    }
+
+    readListingsByCategory = async(category, availability = 'available') => {
+      var cursor;
+      try {
+        let client = await this.getReadyClient();
+        const database = client.db(DB_NAME);
+        const listingCollection = database.collection(COLLECTION_LISTINGS);
+        
+        const query = {category, availability};
+        const options = {
+          sort: {"update_timestamp": -1},
+          projection: {
+            id: 1, title: 1, description: 1, category: 1, quantity: 1, unit: 1,
+            pricePerUnit: 1, currency: 1, images: 1, farmId: 1, location: 1, update_timestamp: 1
+          }
+        };
+        
+        cursor = await listingCollection.find(query, options);
+      } catch (error) {
+        console.error(error);
+        throw Error(ERROR_CODE + "  readListingsByCategory error" + error);
+      }
+      return cursor;
+    }
+
+    ///////////////////// ANALYTICS ////////////////////////
+    
+    getProductCategoryAnalytics = async() => {
+      var result;
+      try {
+        let client = await this.getReadyClient();
+        const database = client.db(DB_NAME);
+        const listingCollection = database.collection(COLLECTION_LISTINGS);
+        
+        const pipeline = [
+          {$match: {availability: 'available'}},
+          {
+            $group: {
+              _id: '$category',
+              count: {$sum: 1},
+              totalQuantity: {$sum: '$quantity'},
+              avgPrice: {$avg: '$pricePerUnit'},
+              totalValue: {$sum: {$multiply: ['$quantity', '$pricePerUnit']}}
+            }
+          },
+          {$sort: {count: -1}}
+        ];
+        
+        result = await listingCollection.aggregate(pipeline).toArray();
+      } catch (error) {
+        console.error(error);
+        throw Error(ERROR_CODE + "  getProductCategoryAnalytics error" + error);
+      }
+      return result;
+    }
+
+    getFarmProductTimeline = async() => {
+      var result;
+      try {
+        let client = await this.getReadyClient();
+        const database = client.db(DB_NAME);
+        const farmCollection = database.collection(COLLECTION_FARMS);
+        
+        const pipeline = [
+          {
+            $lookup: {
+              from: COLLECTION_LISTINGS,
+              let: {farmId: '$id'},
+              pipeline: [
+                {$match: {$expr: {$eq: ['$farmId', '$$farmId']}}},
+                {
+                  $project: {
+                    title: 1,
+                    category: 1,
+                    quantity: 1,
+                    unit: 1,
+                    pricePerUnit: 1,
+                    startDate: '$created_timestamp',
+                    endDate: '$expiresAt',
+                    status: '$availability'
+                  }
+                }
+              ],
+              as: 'products'
+            }
+          },
+          {
+            $project: {
+              name: 1,
+              address: 1,
+              geoId: 1,
+              products: 1
+            }
+          }
+        ];
+        
+        result = await farmCollection.aggregate(pipeline).toArray();
+      } catch (error) {
+        console.error(error);
+        throw Error(ERROR_CODE + "  getFarmProductTimeline error" + error);
+      }
+      return result;
+    }
+
+    getListingStatsByFarm = async(farmId) => {
+      var result;
+      try {
+        let client = await this.getReadyClient();
+        const database = client.db(DB_NAME);
+        const listingCollection = database.collection(COLLECTION_LISTINGS);
+        
+        const pipeline = [
+          {$match: {farmId}},
+          {
+            $group: {
+              _id: '$category',
+              count: {$sum: 1},
+              totalQuantity: {$sum: '$quantity'},
+              avgPrice: {$avg: '$pricePerUnit'},
+              statuses: {$push: '$availability'}
+            }
+          }
+        ];
+        
+        result = await listingCollection.aggregate(pipeline).toArray();
+      } catch (error) {
+        console.error(error);
+        throw Error(ERROR_CODE + "  getListingStatsByFarm error" + error);
+      }
+      return result;
+    }
 
 }//class
 
