@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  LineChart,
-  Line,
   BarChart,
   Bar,
   PieChart,
@@ -11,10 +9,10 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer
 } from 'recharts';
 import { CircularProgress, Card, CardContent, CardHeader, Grid, Container } from '@mui/material';
+import analyticsApi from '../appData/analyticsApi';
 
 /**
  * ProductAnalyticsDashboard
@@ -38,22 +36,13 @@ export function ProductAnalyticsDashboard({ apiBaseUrl = '/mfarmapi' }) {
         setLoading(true);
         setError(null);
 
-        // Fetch pie chart data
-        const pieResponse = await fetch(`${apiBaseUrl}/analytics/product-categories`);
-        if (!pieResponse.ok) throw new Error('Failed to fetch pie chart data');
-        const pieJson = await pieResponse.json();
-        setPieData(pieJson.data || []);
-
-        // Fetch Gantt chart data
-        const ganttResponse = await fetch(`${apiBaseUrl}/analytics/farm-timeline`);
-        if (!ganttResponse.ok) throw new Error('Failed to fetch timeline data');
-        const ganttJson = await ganttResponse.json();
-        setGanttData(ganttJson.data || []);
-
-        setLoading(false);
+        const { pieData: nextPieData, ganttData: nextGanttData } = await analyticsApi.fetchAnalyticsData(apiBaseUrl);
+        setPieData(nextPieData);
+        setGanttData(nextGanttData);
       } catch (err) {
         console.error('Analytics fetch error:', err);
         setError(err.message);
+      } finally {
         setLoading(false);
       }
     };

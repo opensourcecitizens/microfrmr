@@ -12,6 +12,8 @@ import {
 import { Feather, FontAwesome } from '@expo/vector-icons';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import * as ImagePicker from 'expo-image-picker';
+import { addPost } from '../appData/postsStore';
+import { uploadMediaFile } from '../appData/ApiCaller';
 
 export default function AddPost({ navigation }) {
   const [storeName, setStoreName] = useState('');
@@ -34,26 +36,28 @@ export default function AddPost({ navigation }) {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!storeName || !storeAddress || !description) {
       alert('Please fill in all required fields');
       return;
     }
-    
-    const newPost = {
-      id: Date.now(),
-      storeName,
-      storeAddress,
-      storeDetails,
-      status,
-      images,
-      description
-    };
 
-    console.log('New Post:', newPost);
-    //todo call APICaller
+    try {
+      await addPost({
+        storeName,
+        storeAddress,
+        storeDetails,
+        status,
+        images,
+        description,
+        profileImage: 'Farm',
+        farmerName: 'Demo Farmer'
+      });
 
-    navigation.goBack();
+      navigation.goBack();
+    } catch (error) {
+      alert(error.message || 'Unable to create post');
+    }
   };
 
   return (

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,20 +10,21 @@ import {
   FlatList,
 } from 'react-native';
 import { Feather, FontAwesome } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import DetailsData from '../appData/detailsScreenData.json';
-import ImageMap from '../appData/imageMap';
-import ImageMap from '../components/ImageHandler';
+import { getPosts, loadPosts, subscribe } from '../appData/postsStore';
 
 export default function DetailsScreen() {
+  const navigation = useNavigation();
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState({});
   const [likes, setLikes] = useState({});
   const [shares, setShares] = useState({});
   const [views, setViews] = useState({});
+  const [posts, setPosts] = useState(getPosts());
 
   const handleLike = (postId) =>
     setLikes({ ...likes, [postId]: (likes[postId] || 0) + 1 });
@@ -31,6 +32,7 @@ export default function DetailsScreen() {
     setShares({ ...shares, [postId]: (shares[postId] || 0) + 1 });
   const handleView = (postId) =>
     setViews({ ...views, [postId]: (views[postId] || 0) + 1 });
+
   const handlePostComment = (postId) => {
     if (comment) {
       setComments((prevComments) => ({
@@ -41,86 +43,76 @@ export default function DetailsScreen() {
     }
   };
 
+  useEffect(() => {
+    const unsubscribe = subscribe(() => setPosts(getPosts()));
+    loadPosts().catch(() => null);
+    return unsubscribe;
+  }, []);
+
   const renderPost = ({ item }) => (
     <View style={styles.container}>
-      {/* Post Header Section with Embedded Status */}
       <View style={styles.profileSection}>
         <Image
-          source={ImageMap[item.profileImage]} // Use the profileImage key from the data
+          source={typeof item.profileImage === 'string' && item.profileImage.startsWith('http') ? { uri: item.profileImage } : { uri: 'https://placehold.co/300x300/png' }}
           style={styles.profileImage}
         />
         <View style={styles.profileInfo}>
-          <Text style={styles.farmName}>
-            {item.farmName || item.storeName}
-          </Text>
-          <Text style={styles.farmAddress}>
-            {item.farmAddress || item.storeAddress}
-          </Text>
-          <Text style={styles.farmDetails}>
-            {item.farmDetails || item.storeDetails}
-          </Text>
+          <View style={styles.profileHeaderRow}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.farmName}>{item.farmName || item.storeName}</Text>
+              <Text style={styles.farmAddress}>{item.farmAddress || item.storeAddress}</Text>
+              <Text style={styles.farmDetails}>{item.farmDetails || item.storeDetails}</Text>
+            </View>
+            <TouchableOpacity onPress={() => navigation.navigate('FarmProfileSettings', { post: item })}>
+              <Feather name="settings" size={wp('5.5%')} color="#fff" />
+            </TouchableOpacity>
+          </View>
           <Text style={styles.statusTextInHeader}>Status: {item.status}</Text>
         </View>
       </View>
 
-      {/* Carousel of Images */}
       <ScrollView
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         style={styles.carousel}
       >
-        {item.images.map((imageKey, index) => (
+        {(item.images || []).map((imageUri, index) => (
           <Image
             key={index}
-
-            source={ImageMap[imageKey]}
+            source={typeof imageUri === 'string' && imageUri.startsWith('http') ? { uri: imageUri } : { uri: 'https://placehold.co/800x600/png' }}
             style={styles.carouselImage}
           />
         ))}
       </ScrollView>
 
-      {/* Interactive Icons Section */}
       <View style={styles.iconSection}>
-        <TouchableOpacity
-          style={styles.iconButton}
-          onPress={() => handleLike(item.id)}
-        >
+        <TouchableOpacity style={styles.iconButton} onPress={() => handleLike(item.id)}>
           <Feather name="thumbs-up" size={wp('6%')} color="#45cca3" />
           <Text style={styles.iconText}>{likes[item.id] || 0}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.iconButton} onPress={() => {}}>
           <Feather name="message-square" size={wp('6%')} color="#45cca3" />
-          <Text style={styles.iconText}>
-            {(comments[item.id] || []).length}
-          </Text>
+          <Text style={styles.iconText}>{(comments[item.id] || []).length}</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.iconButton}
-          onPress={() => handleShare(item.id)}
-        >
+        <TouchableOpacity style={styles.iconButton} onPress={() => handleShare(item.id)}>
           <Feather name="share-2" size={wp('6%')} color="#45cca3" />
           <Text style={styles.iconText}>{shares[item.id] || 0}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.iconButton} onPress={() => {}}>
           <FontAwesome name="download" size={wp('6%')} color="#45cca3" />
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.iconButton}
-          onPress={() => handleView(item.id)}
-        >
+        <TouchableOpacity style={styles.iconButton} onPress={() => handleView(item.id)}>
           <Feather name="eye" size={wp('6%')} color="#45cca3" />
           <Text style={styles.iconText}>{views[item.id] || 0}</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Description Text */}
       <Text style={styles.descriptionText}>
         {item.description}
         <Text style={styles.showMore}> show more</Text>
       </Text>
 
-      {/* Comment Section */}
       <View style={styles.commentContainer}>
         <TextInput
           style={styles.commentInput}
@@ -129,15 +121,11 @@ export default function DetailsScreen() {
           value={comment}
           onChangeText={setComment}
         />
-        <TouchableOpacity
-          style={styles.commentButton}
-          onPress={() => handlePostComment(item.id)}
-        >
+        <TouchableOpacity style={styles.commentButton} onPress={() => handlePostComment(item.id)}>
           <Feather name="send" size={wp('6%')} color="#45cca3" />
         </TouchableOpacity>
       </View>
 
-      {/* Comments List */}
       {(comments[item.id] || []).map((c, index) => (
         <Text key={index} style={styles.commentText}>
           {c}
@@ -148,12 +136,10 @@ export default function DetailsScreen() {
 
   return (
     <FlatList
-      data={
-      //todo add ApiCaller method here
-      DetailsData.posts
-      }
+      data={posts}
       renderItem={renderPost}
       keyExtractor={(item) => item.id.toString()}
+      ListEmptyComponent={<Text style={styles.emptyState}>No live posts yet. Create one to see it here.</Text>}
     />
   );
 }
@@ -180,6 +166,12 @@ const styles = StyleSheet.create({
   },
   profileInfo: {
     flex: 1,
+  },
+  profileHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: wp('2%'),
   },
   farmName: {
     fontSize: wp('4.5%'),
@@ -255,5 +247,10 @@ const styles = StyleSheet.create({
     color: '#333',
     paddingHorizontal: wp('5%'),
     paddingVertical: hp('0.5%'),
+  },
+  emptyState: {
+    padding: wp('5%'),
+    textAlign: 'center',
+    color: '#666'
   },
 });
